@@ -8,10 +8,13 @@ import { IesUploader } from './components/IesUploader';
 import { PolarDiagram } from './components/PolarDiagram';
 import { GeneratePdfButton } from './components/GeneratePdfButton';
 import { LuminaireDataForm } from './components/LuminaireDataForm';
+import { DownloadIesButton } from './components/DownloadIesButton';
+
 // --- Importaciones de Lógica y Tipos ---
 import { generateEstimatedPhotometricData } from './utils/photometricEstimator';
 // Esta importación ahora funcionará porque el archivo 'data.ts' existe
 import { LuminaireReportData, FullLuminaireData } from './types/data';
+
 
 const DIAGRAM_ID = 'polar-diagram-container';
 
@@ -89,10 +92,27 @@ function App() {
                 Subir Archivo (Preciso)
               </button>
             </div>
-            <div className="p-4">
-              {activeTab === 'estimate' && <PhotometricEstimatorForm onGenerate={handleGenerateCurve} />}
-              {activeTab === 'upload' && <IesUploader onDataParsed={handleDataParsed} />}
-            </div>
+           <div className="p-4">
+  {activeTab === 'estimate' && (
+    // Usamos un Fragment (<>) para agrupar varios elementos
+    <>
+      <PhotometricEstimatorForm onGenerate={handleGenerateCurve} />
+      
+      {/* --- BOTÓN AÑADIDO AQUÍ --- */}
+      {/* Se muestra solo si ya se ha generado una curva (luminaireData.photometrics existe) */}
+      {luminaireData.photometrics && (
+        <div className="mt-6 border-t pt-6">
+          <DownloadIesButton 
+            reportData={luminaireData.reportData}
+            photometricData={luminaireData.photometrics}
+          />
+        </div>
+      )}
+    </>
+  )}
+
+  {activeTab === 'upload' && <IesUploader onDataParsed={handleDataParsed} />}
+</div>
           </div>
           <div className='p-4 border rounded-lg shadow-md bg-white space-y-4'>
             <h2 className="text-xl font-bold text-gray-700">Resultados y Datos del Informe</h2>
