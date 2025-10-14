@@ -1,9 +1,9 @@
 // src/components/PhotometricEstimatorForm.tsx
 
 import React, { useEffect, useMemo, useState } from 'react';
-import { BeamAngleVisualizer } from './BeamAngleVisualizer'; // Asumo que este componente existe
+import { BeamAngleVisualizer } from './BeamAngleVisualizer';
 import { EstimatorFormData } from '../types/data';
-import { FormField } from './FormField'; // Asumo que este componente existe
+import { FormField } from './FormField';
 
 interface PhotometricEstimatorFormProps {
   onGenerate: (formData: EstimatorFormData) => void;
@@ -20,14 +20,14 @@ const luminaireTypeOptions = [
 ];
 
 const luminairePresets: { [key: string]: Partial<EstimatorFormData> } = {
-  'Downlight': { productName: 'Downlight Oficina 60°', power: 15, luminousFlux: 1600, beamAngle: 60, opticsType: 'Difusor Opal', emissionShape: 'Simétrica', dimensions: 'Ø150 x 80mm', cct: 4000, cri: 90, luminaireType: 'Downlight' },
-  'Proyector': { productName: 'Proyector Fachada 24°', power: 25, luminousFlux: 2800, beamAngle: 24, opticsType: 'Lente TIR', emissionShape: 'Simétrica', dimensions: '200x150x90mm', cct: 4000, cri: 80, luminaireType: 'Proyector' },
-  'Lineal / Perfil': { productName: 'Perfil Lineal Asimétrico', power: 40, luminousFlux: 4200, beamAngle: 90, opticsType: 'Difusor Opal', emissionShape: 'Asimétrica', dimensions: '1200x50x60mm', cct: 3000, cri: 80, luminaireType: 'Lineal / Perfil' },
-  'Campana industrial': { productName: 'Campana Industrial 90°', power: 150, luminousFlux: 20000, beamAngle: 90, opticsType: 'Reflector', emissionShape: 'Simétrica', dimensions: 'Ø300 x 220mm', cct: 4000, cri: 70, luminaireType: 'Campana industrial' },
+  'Downlight': { productName: 'Downlight Oficina 60°', power: 15, luminousFlux: 1600, beamAngle: 60, opticsType: 'Difusor Opal', emissionShape: 'Simétrica', spec: 'DL-OFFICE-60D', dimensions: 'Ø150 x 80mm', cct: 4000, cri: 90, luminaireType: 'Downlight' },
+  'Proyector': { productName: 'Proyector Fachada 24°', power: 25, luminousFlux: 2800, beamAngle: 24, opticsType: 'Lente TIR', emissionShape: 'Simétrica', spec: 'PRJ-EXT-24D', dimensions: '200x150x90mm', cct: 4000, cri: 80, luminaireType: 'Proyector' },
+  'Lineal / Perfil': { productName: 'Perfil Lineal Asimétrico', power: 40, luminousFlux: 4200, beamAngle: 90, opticsType: 'Difusor Opal', emissionShape: 'Asimétrica', spec: 'LIN-AS-1200', dimensions: '1200x50x60mm', cct: 3000, cri: 80, luminaireType: 'Lineal / Perfil' },
+  'Campana industrial': { productName: 'Campana Industrial 90°', power: 150, luminousFlux: 20000, beamAngle: 90, opticsType: 'Reflector', emissionShape: 'Simétrica', spec: 'HB-UFO-150-90D', dimensions: 'Ø300 x 220mm', cct: 4000, cri: 70, luminaireType: 'Campana industrial' },
 };
 
 export const PhotometricEstimatorForm: React.FC<PhotometricEstimatorFormProps> = ({ onGenerate, onReset }) => {
-  const initialState: EstimatorFormData = useMemo(() => ({ productName: 'Downlight Oficina 60°', luminaireType: 'Downlight', dimensions: 'Ø150 x 80mm', power: 15, luminousFlux: 1600, beamAngle: 60, opticsType: 'Difusor Opal', emissionShape: 'Simétrica', cct: 4000, cri: 90, }), []);
+  const initialState: EstimatorFormData = useMemo(() => ({ productName: 'Downlight Oficina 60°', luminaireType: 'Downlight', dimensions: 'Ø150 x 80mm', power: 15, luminousFlux: 1600, beamAngle: 60, opticsType: 'Difusor Opal', emissionShape: 'Simétrica', cct: 4000, cri: 90, spec: 'DL-OFFICE-60D' }), []);
 
   const [formData, setFormData] = useState<EstimatorFormData>(initialState);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -35,48 +35,46 @@ export const PhotometricEstimatorForm: React.FC<PhotometricEstimatorFormProps> =
   const [savedAt, setSavedAt] = useState<number | null>(null);
   const [showToast, setShowToast] = useState(false);
 
+  // Load saved session
   useEffect(() => {
-    try { const raw = localStorage.getItem(LOCALSTORAGE_KEY); if (raw) { const parsed = JSON.parse(raw); setFormData(prev => ({ ...initialState, ...parsed })); setSavedAt(Date.now()); } } catch (_) {}
+    try { 
+      const raw = localStorage.getItem(LOCALSTORAGE_KEY); 
+      if (raw) { 
+        const parsed = JSON.parse(raw);
+        // <<<< CORRECCIÓN DEL ERROR DE BUILD >>>>
+        // No necesitamos 'prev' aquí. Simplemente establecemos el nuevo estado.
+        setFormData({ ...initialState, ...parsed }); 
+        setSavedAt(Date.now()); 
+      } 
+    } catch (_) {}
   }, [initialState]);
 
+  // Autosave debounced
   useEffect(() => {
     if (!dirty) return;
     const t = setTimeout(() => { try { localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify(formData)); setSavedAt(Date.now()); setDirty(false); } catch (_) {} }, 700);
     return () => clearTimeout(t);
   }, [dirty, formData]);
 
-const applyPreset = (value: string) => {
-  if (formData.luminaireType === value) return;
-  
-  const selectedPreset = luminairePresets[value];
-  if (selectedPreset) {
-    // Creamos una copia del preset para poder modificarla
-    const presetData = { ...selectedPreset };
-    
-    // <<<< LA CLAVE ESTÁ AQUÍ >>>>
-    // Borramos la propiedad 'productName' del preset antes de aplicarlo.
-    // De esta forma, no sobreescribirá lo que el usuario haya escrito.
-    delete presetData.productName;
-
-    // Ahora aplicamos el resto de los datos del preset
-    setFormData(prev => ({
-      ...prev,           // Mantenemos el productName actual y otros campos no definidos en el preset
-      ...presetData,     // Aplicamos los nuevos valores (potencia, flujo, etc.)
-      luminaireType: value // Y actualizamos el tipo de luminaria
-    }));
-    
-    setErrors({});
-    setDirty(true);
-  }
-};
+  const applyPreset = (value: string) => {
+    if (formData.luminaireType === value) return;
+    const selectedPreset = luminairePresets[value];
+    if (selectedPreset) {
+        setFormData(selectedPreset as EstimatorFormData);
+        setErrors({});
+        setDirty(true);
+    }
+  };
 
   const handleNumericChange = (name: keyof EstimatorFormData, raw: string | number | null) => {
     const val = raw === '' || raw === null ? null : (typeof raw === 'string' ? parseFloat(raw) : raw);
-    setFormData(prev => ({ ...prev, [name]: val })); setDirty(true);
+    setFormData(prevData => ({ ...prevData, [name]: val }));
+    setDirty(true);
   };
 
   const handleStringChange = (name: keyof EstimatorFormData, value: string) => {
-    setFormData(prev => ({ ...prev, [name]: value })); setDirty(true);
+    setFormData(prevData => ({ ...prevData, [name]: value }));
+    setDirty(true);
   };
 
   const validate = (data: EstimatorFormData) => {
@@ -103,10 +101,7 @@ const applyPreset = (value: string) => {
     setTimeout(() => setShowToast(false), 2000);
   }
 
-  // EN: src/components/PhotometricEstimatorForm.tsx
-
-// Reemplaza tu bloque 'return' completo por este:
-return (
+  return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="flex items-center justify-between">
         <h3 className="text-lg font-semibold">Datos de la luminaria</h3>
@@ -118,7 +113,6 @@ return (
       <fieldset className="rounded-lg border p-4 shadow-sm">
         <legend className="px-2 text-md font-semibold text-gray-800">Identificación</legend>
         <div className="grid grid-cols-1 gap-4">
-          
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">1. Tipo de Luminaria</label>
             <select
@@ -131,7 +125,6 @@ return (
               ))}
             </select>
           </div>
-
           <FormField
             id="productName"
             label="2. Nombre / Referencia"
@@ -140,7 +133,6 @@ return (
             error={errors.productName}
             required
           />
-
           <div>
             <label htmlFor="spec" className="block text-sm font-medium text-gray-700">SPEC. (Especificación)</label>
             <input 
@@ -152,12 +144,10 @@ return (
               placeholder="Ej: DL-20-40K" 
             />
           </div>
-
           <div className="text-xs text-gray-500 border-t pt-2 mt-2">
             <p>Preset aplicado: <span className="font-medium">{presetSummary}</span></p>
             <p className="mt-1">Puedes modificar cualquier valor a continuación.</p>
           </div>
-
           <div>
             <label htmlFor="dimensions" className="block text-sm font-medium text-gray-700">Dimensiones (mm)</label>
             <input 
@@ -169,7 +159,6 @@ return (
               placeholder="Ej: Ø150 x 80mm" 
             />
           </div>
-
         </div>
       </fieldset>
       
