@@ -1,0 +1,41 @@
+// src/utils/photometricModels/wallwasher.ts
+
+import { EstimatorFormData, EstimationResult } from '../../types/data';
+import { deg2rad, gaussian, normalizeCandelas } from './sharedUtils';
+
+/**
+ * Modelo fotométrico para luminarias tipo Wall Washer.
+ */
+export function generateWallWasherModel(formData: EstimatorFormData): EstimationResult {
+  const { luminousFlux, beamAngle, power } = formData;
+  
+  const verticalAngles: number[] = Array.from({ length: 181 }, (_, i) => i);
+  const horizontalAngles = [0, 90];
+
+  const flux = Math.max(1, luminousFlux || 1);
+  const safeBeam = Math.max(15, Math.min(60, beamAngle || 30));
+  
+  const peakAngle = safeBeam * 0.7; 
+  const sigmaNarrow = safeBeam / 2;
+  const sigmaWide = sigmaNarrow * 1.8;
+
+  const f_C0 = verticalAngles.map(ang => (ang <= 90 ? gaussian(ang, sigmaNarrow, peakAngle) : 0));
+  const f_C90 = verticalAngles.map(ang => (ang <= 90 ? gaussian(ang, sigmaWide, peakAngle) : 0));
+
+  const dTheta = deg2rad(1);
+  const K_C0 = normalizeCandelas(flux, verticalAngles, f_C0, dTheta);
+  const K_C90 = normalizeCandelas(flux, verticalAngles, f_C90, dTheta);
+  
+  const candelasC0 = f_C0.map(f => K_C0 * f);
+  const candelasC90 = f_C90.map(f => K_C90 * f);
+
+  const candelaValues = verticalAngles.map((_, i) => [candelasC0[i], candelasC90[i]]);
+  const calculatedImax = Math.max(0, ...candelasC0);
+  const calculatedEfficiency = power ? `${(flux / power).toFixed(1)} lm/W` : 'N/A';
+  
+  return {
+    photometricData: { verticalAngles, horizontalAngles, candelaValues },
+    calculatedImax,
+    calculatedEfficiency,
+  };
+}

@@ -1,6 +1,6 @@
 // src/components/DownloadIesButton.tsx
 import React from 'react';
-import { generateIesFileContent } from '../utils/photometricEstimator';
+import { generateIesFileContent } from '../utils/fileGenerators'; // RUTA CORREGIDA
 import { LuminaireReportData, PhotometricData } from '../types/data';
 
 interface DownloadIesButtonProps {
@@ -9,29 +9,18 @@ interface DownloadIesButtonProps {
 }
 
 export const DownloadIesButton: React.FC<DownloadIesButtonProps> = ({ reportData, photometricData }) => {
-  
   const handleDownload = () => {
     if (!reportData || !photometricData) {
-      alert("No hay datos estimados para generar un archivo IES.");
+      alert("No hay datos para generar un archivo IES.");
       return;
     }
-
-    // 1. Generar el contenido del archivo
     const iesContent = generateIesFileContent(reportData, photometricData);
-
-    // 2. Crear un "Blob" (un objeto de archivo en memoria)
     const blob = new Blob([iesContent], { type: 'text/plain;charset=utf-8' });
-
-    // 3. Crear una URL temporal para el Blob
     const url = URL.createObjectURL(blob);
-
-    // 4. Crear un enlace <a> invisible para iniciar la descarga
     const link = document.createElement('a');
     link.href = url;
-    const fileName = (reportData.name || 'estimated-photometry').replace(/\s+/g, '_') + '.ies';
+    const fileName = (reportData.productName || 'estimated-photometry').replace(/\s+/g, '_') + '.ies';
     link.download = fileName;
-    
-    // 5. Simular un clic en el enlace y luego limpiarlo
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);

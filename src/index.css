@@ -1,3 +1,32 @@
+/*
+  Este es el archivo principal de estilos de tu aplicación.
+  Las tres primeras líneas son directivas de TailwindCSS. Le dicen a Tailwind
+  que inyecte sus estilos base, de componentes y de utilidades.
+*/
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/*
+  --- SECCIÓN DE COMPONENTES PERSONALIZADOS ---
+  Aquí es donde definimos nuestras propias clases reutilizables usando la directiva @apply de Tailwind.
+  Esto mantiene nuestro JSX más limpio y los estilos consistentes.
+*/
+
+/*
+  Clase para los botones de "Presets".
+  Define el padding, color de fondo, color de texto, tamaño de fuente, bordes redondeados,
+  y los efectos de transición al pasar el ratón por encima.
+*/
+.preset-button {
+  @apply px-3 py-1 bg-gray-200 text-gray-700 text-sm font-medium rounded-full hover:bg-blue-500 hover:text-white transition-colors cursor-pointer;
+}
+
+/*
+  Clase general para todos los inputs y selects del formulario.
+  Define el margen, que ocupe todo el ancho, los bordes redondeados, la sombra,
+  y un efecto de anillo azul (focus) cuando el usuario hace clic en el campo.
+*/
+.input-style {
+  @apply block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 sm:text-sm;
+}

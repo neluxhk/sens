@@ -1,86 +1,91 @@
 // src/utils/iesParser.ts
 
-export interface IesData {
-  verticalAngles: number[];
-  horizontalAngles: number[];
-  candelaValues: number[][];
-  manufacturer?: string; // <-- Nuevo
-  luminaire?: string;    // <-- Nuevo
-  lumensPerLamp?: number;
-  numLamps?: number;
-  [key: string]: any;
-}
+import { PhotometricData, ParsedPhotometricData, LuminaireReportData } from '../types/data';
 
-export function parseIes(iesContent: string): IesData {
-  const lines = iesContent.split('\n').map(line => line.trim());
-  let currentLine = 0;
-  
-  const metadata: { [key: string]: string } = {};
-  
-  // --- LÓGICA MEJORADA PARA LEER METADATOS ---
-  // Lee las líneas de metadatos entre IESNA y TILT=NONE
-  let line = lines[currentLine];
-  while (currentLine < lines.length && !line.toUpperCase().startsWith('TILT=')) {
-    if (line.startsWith('[')) {
-      const key = line.substring(1, line.indexOf(']')).toLowerCase();
-      const value = line.substring(line.indexOf(']') + 1).trim();
-      metadata[key] = value;
+export function parseIes(iesContent: string): ParsedPhotometricData {
+  try {
+    const lines = iesContent.replace(/\r\n/g, '\n').split('\n');
+    let lineIndex = 0;
+
+    // --- 1. LOCALIZAR TILT= ---
+    const tiltLineIndex = lines.findIndex(line => line.toUpperCase().startsWith('TILT='));
+    if (tiltLineIndex === -1) throw new Error("No se encontró la línea 'TILT='.");
+
+    // --- 2. EXTRAER METADATOS ---
+    const reportData: LuminaireReportData = {};
+    const keywordLines = lines.slice(0, tiltLineIndex);
+    keywordLines.forEach(line => {
+      const trimmedLine = line.trim();
+      if (trimmedLine.startsWith('[')) {
+        const keyEnd = trimmedLine.indexOf(']');
+        if (keyEnd > -1) {
+          const key = trimmedLine.substring(1, keyEnd).toUpperCase();
+          const value = trimmedLine.substring(keyEnd + 1).trim();
+          if (value) {
+            switch (key) {
+              case 'MANUFAC': reportData.manufacturer = value; break;
+              case 'LUMCAT': reportData.spec = value; reportData.model = value; break;
+              case 'LUMINAIRE': reportData.productName = value; break;
+              case 'TEST': if (!reportData.productName) reportData.productName = value; break;
+            }
+          }
+        }
+      }
+    });
+
+    // --- 3. PROCESAR PARÁMETROS NUMÉRICOS ---
+    lineIndex = tiltLineIndex + 1;
+    const readNumericLine = () => {
+      while (lines[lineIndex] !== undefined && !lines[lineIndex].trim().match(/^\d/)) { lineIndex++; }
+      if (lines[lineIndex] === undefined) throw new Error("Formato de datos numéricos inesperado.");
+      const values = lines[lineIndex].split(/\s+/).filter(Boolean).map(Number);
+      lineIndex++;
+      return values;
     }
-    line = lines[++currentLine];
-  }
+    const params1 = readNumericLine();
+    const numLamps = params1[0], lumensPerLamp = params1[1], numVertical = params1[3], numHorizontal = params1[4];
+    const params2 = readNumericLine();
+    const power = params2[2];
+    
+    reportData.power = power;
+    reportData.luminousFlux = numLamps * lumensPerLamp;
 
-  // Skip until TILT=NONE
-  while (currentLine < lines.length && !lines[currentLine].toUpperCase().startsWith('TILT=NONE')) {
-    currentLine++;
-  }
-  if (currentLine >= lines.length) {
-    throw new Error('Formato IES inválido: No se encontró la línea TILT=NONE.');
-  }
-  currentLine++;
+    // --- 4. LEER ÁNGULOS Y CANDELAS (MÉTODO CORREGIDO Y SEGURO) ---
+    // Juntamos todas las líneas de datos restantes en un solo string
+    const dataString = lines.slice(lineIndex).join(' ').trim();
+    // Lo convertimos en un único array de todos los números
+    const allValues = dataString.split(/\s+/).map(Number);
+    let currentIndex = 0;
 
-  const propsLine = lines[currentLine++].split(/\s+/).map(Number);
-  if (propsLine.length < 10) {
-      throw new Error("Línea de propiedades fotométricas incompleta o inválida.");
-  }
+    // Leemos el número exacto de ángulos que necesitamos
+    const verticalAngles = allValues.slice(currentIndex, currentIndex + numVertical);
+    currentIndex += numVertical;
+    const horizontalAngles = allValues.slice(currentIndex, currentIndex + numHorizontal);
+    currentIndex += numHorizontal;
 
-  const numLamps = propsLine[0];
-  const lumensPerLamp = propsLine[1];
-  const candelaMultiplier = propsLine[2];
-  const numVerticalAngles = propsLine[3];
-  const numHorizontalAngles = propsLine[4];
-  
-  currentLine++;
+    // El resto de los valores son las candelas
+    const candelaValuesRaw = allValues.slice(currentIndex, currentIndex + (numVertical * numHorizontal));
 
-  const valuesStr = lines.slice(currentLine).join(' ');
-  const values = valuesStr.split(/\s+/).map(Number).filter(n => !isNaN(n));
-  
-  let valueIndex = 0;
-  
-  const verticalAngles = values.slice(valueIndex, valueIndex + numVerticalAngles);
-  valueIndex += numVerticalAngles;
-
-  const horizontalAngles = values.slice(valueIndex, valueIndex + numHorizontalAngles);
-  valueIndex += numHorizontalAngles;
-
-  const candelaValuesRaw = values.slice(valueIndex);
-  const candelaValues: number[][] = Array(numVerticalAngles).fill(0).map(() => Array(numHorizontalAngles).fill(0));
-
-  for (let h = 0; h < numHorizontalAngles; h++) {
-    for (let v = 0; v < numVerticalAngles; v++) {
-      const candela = candelaValuesRaw[h * numVerticalAngles + v];
-      candelaValues[v][h] = candela * candelaMultiplier;
+    if (candelaValuesRaw.length !== numVertical * numHorizontal) {
+      throw new Error("El número de valores de candela no coincide con el esperado.");
     }
-  }
 
-  return {
-    verticalAngles,
-    horizontalAngles,
-    candelaValues,
-    lumensPerLamp,
-    numLamps,
-    // --- Devolvemos los metadatos leídos ---
-    manufacturer: metadata.manufac || metadata.manufacturer,
-    luminaire: metadata.luminaire,
-    // ... puedes añadir más metadatos aquí si los necesitas
-  };
+    const candelaValues: number[][] = Array(numVertical).fill(0).map(() => Array(numHorizontal).fill(0));
+    for (let h = 0; h < numHorizontal; h++) {
+      for (let v = 0; v < numVertical; v++) {
+        candelaValues[v][h] = candelaValuesRaw[h * numVertical + v] || 0;
+      }
+    }
+
+    const photometrics: PhotometricData = { verticalAngles, horizontalAngles, candelaValues };
+    
+    reportData.imax = Math.round(Math.max(0, ...candelaValuesRaw));
+    if (!reportData.luminaireType) reportData.luminaireType = 'Desde archivo IES';
+
+    return { photometrics, reportData };
+
+  } catch (error) {
+    console.error("Error al procesar el archivo IES:", error);
+    throw new Error("El archivo IES parece estar corrupto o tiene un formato no estándar.");
+  }
 }

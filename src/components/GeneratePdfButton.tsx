@@ -1,11 +1,7 @@
 // src/components/GeneratePdfButton.tsx
 
-import React from 'react';
-import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
-
-// --- CORRECCIÓN DE IMPORTACIÓN ---
-// Importamos la interfaz desde su nueva ubicación centralizada y correcta.
+import React, { useState } from 'react';
+import { generatePdfReport } from '../utils/pdfGenerator'; // <<<< 1. IMPORTAMOS LA NUEVA FUNCIÓN CENTRALIZADA
 import { LuminaireReportData } from '../types/data';
 
 interface GeneratePdfButtonProps {
@@ -14,49 +10,38 @@ interface GeneratePdfButtonProps {
 }
 
 export const GeneratePdfButton: React.FC<GeneratePdfButtonProps> = ({ reportData, diagramId }) => {
+  // Opcional: Añadimos un estado para dar feedback al usuario
+  const [isGenerating, setIsGenerating] = useState(false);
 
-  const generatePdf = () => {
-    const diagramElement = document.getElementById(diagramId);
-    if (!diagramElement || !reportData) {
-      alert("Faltan datos o el diagrama no está visible para generar el PDF.");
+  // <<<< 2. LA LÓGICA COMPLEJA DESAPARECE >>>>
+  // El 'handle' ahora es muy simple: solo llama a nuestra función de utilidad.
+  const handleGenerate = async () => {
+    if (!reportData) {
+      alert("No hay datos para generar el informe.");
       return;
     }
-
-    html2canvas(diagramElement).then(canvas => {
-      const diagramImage = canvas.toDataURL('image/png');
-      const doc = new jsPDF('p', 'mm', 'a4');
-
-      doc.setFontSize(14);
-      doc.setFont('helvetica', 'bold');
-      doc.text('LUMINAIRE PHOTOMETRIC TEST REPORT', 105, 20, { align: 'center' });
-
-      doc.setFontSize(10);
-      doc.setFont('helvetica', 'normal');
-      doc.text(`NAME: ${reportData.name || ''}`, 20, 40);
-      doc.text(`MFR.: ${reportData.manufacturer || ''}`, 20, 45);
-      doc.text(`Lamp Flux: ${reportData.lampFlux || ''}`, 20, 50);
-      
-      doc.text(`Imax (cd): ${reportData.imax || ''}`, 130, 40);
-      doc.text(`Total Flux (lm): ${reportData.totalFlux || ''}`, 130, 45);
-      doc.text(`Eff: ${reportData.efficiency || ''}`, 130, 50);
-      
-      const imgWidth = 120;
-      const imgHeight = (canvas.height * imgWidth) / canvas.width;
-      doc.addImage(diagramImage, 'PNG', (210 - imgWidth) / 2, 80, imgWidth, imgHeight); 
-      
-      doc.save('reporte-fotometrico.pdf');
-    });
+    
+    setIsGenerating(true); // Informamos a la UI que estamos trabajando
+    try {
+      // Llamamos a la función asíncrona y esperamos a que termine.
+      // Por ahora no pasamos logo de usuario.
+      await generatePdfReport(reportData, diagramId);
+    } catch (error) {
+      console.error("Error al generar el PDF:", error);
+      alert("Ocurrió un error al intentar generar el informe en PDF.");
+    } finally {
+      setIsGenerating(false); // Devolvemos la UI a su estado normal
+    }
   };
 
+  // <<<< 3. EL JSX SE ACTUALIZA PARA MOSTRAR EL ESTADO 'loading' >>>>
   return (
-    <div className="p-4 bg-white border rounded-lg shadow-md">
-      <button 
-        onClick={generatePdf}
-        className="w-full px-4 py-3 bg-blue-600 text-white font-bold rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors disabled:bg-gray-400"
-        disabled={!reportData || Object.keys(reportData).length === 0}
-      >
-        Descargar Informe en PDF
-      </button>
-    </div>
+    <button
+      onClick={handleGenerate}
+      disabled={!reportData || isGenerating} // Deshabilitamos el botón mientras se genera
+      className="w-full px-4 py-3 bg-blue-600 text-white font-bold rounded-lg shadow-md hover:bg-blue-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
+    >
+      {isGenerating ? 'Generando PDF...' : 'Descargar Informe en PDF'}
+    </button>
   );
 };
