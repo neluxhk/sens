@@ -29,6 +29,7 @@ export interface LuminaireReportData {
   cri?: number;
   ratedVoltage?: string;
   notes?: string;
+  calculatedImax?: number;
   
   // Añadidos para compatibilidad total con todos los modelos
   opticsType?: string;

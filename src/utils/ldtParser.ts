@@ -42,7 +42,7 @@ export function parseLdt(ldtContent: string): ParsedPhotometricData {
       }
     }
     const photometrics: PhotometricData = { verticalAngles, horizontalAngles, candelaValues };
-    reportData.imax = Math.round(Math.max(0, ...candelaValuesRaw));
+    reportData.Imax = Math.round(Math.max(0, ...candelaValuesRaw));
 
     return { photometrics, reportData };
   } catch (error) {
