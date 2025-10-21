@@ -14,7 +14,7 @@ export function parseIes(iesContent: string): ParsedPhotometricData {
       manufacturer: undefined,
       power: undefined,
       luminousFlux: undefined,
-      calculatedImax: undefined,
+      Imax: undefined,
       calculatedEfficiency: undefined,
       model: undefined,
       lampsInside: undefined,
@@ -82,7 +82,7 @@ export function parseIes(iesContent: string): ParsedPhotometricData {
 
     const photometrics: PhotometricData = { verticalAngles, horizontalAngles, candelaValues };
 
-    reportData.calculatedImax = Math.max(0, ...candelaValuesRaw);
+    reportData.Imax = Math.max(0, ...candelaValuesRaw);
     reportData.calculatedEfficiency = (reportData.luminousFlux && reportData.power)
       ? `${(reportData.luminousFlux / reportData.power).toFixed(1)} lm/W`
       : 'N/A';

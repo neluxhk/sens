@@ -11,74 +11,81 @@ interface GeneratePdfButtonProps {
   disabled?: boolean;
   onStartRender: () => { polarId: string; isoluxId: string } | null;
   onEndRender: () => void;
+  className?: string; // <-- clase opcional
 }
 
-export const GeneratePdfButton: React.FC<GeneratePdfButtonProps> = ({ reportData, disabled, onStartRender, onEndRender }) => {
+export const GeneratePdfButton: React.FC<GeneratePdfButtonProps> = ({
+  reportData,
+  disabled,
+  onStartRender,
+  onEndRender,
+  className,
+}) => {
   const [isLoading, setIsLoading] = useState(false);
-  
+
   const handleDownload = async () => {
     if (disabled || !reportData) return;
     setIsLoading(true);
 
     const ids = onStartRender();
-    if (!ids) { setIsLoading(false); return; }
+    if (!ids) {
+      setIsLoading(false);
+      return;
+    }
 
     setTimeout(async () => {
       try {
         const [polarElement, isoluxElement] = await Promise.all([
           document.getElementById(ids.polarId),
-          document.getElementById(ids.isoluxId)
+          document.getElementById(ids.isoluxId),
         ]);
         if (!polarElement || !isoluxElement) throw new Error("PDF elements not found.");
 
         const [polarCanvas, isoluxCanvas] = await Promise.all([
           html2canvas(polarElement, { scale: 3, useCORS: true }),
-          html2canvas(isoluxElement, { scale: 3, useCORS: true })
+          html2canvas(isoluxElement, { scale: 3, useCORS: true }),
         ]);
 
         const polarImage = polarCanvas.toDataURL('image/jpeg', 0.9);
         const isoluxImage = isoluxCanvas.toDataURL('image/jpeg', 0.9);
-        
+
         const doc = new jsPDF('p', 'pt', 'a4');
         const pageWidth = doc.internal.pageSize.getWidth();
         const margin = 40;
         let y = margin;
 
-        // --- 1. CABECERA ---
+        // --- CABECERA ---
         doc.setFontSize(10).setFont('helvetica', 'normal');
         doc.text('SENS Photometric Estimation', margin, y);
-        doc.text(`Page 1 of 1`, pageWidth - margin, y, { align: 'right' });
+        doc.text('Page 1 of 1', pageWidth - margin, y, { align: 'right' });
         y += 30;
         doc.setFontSize(14).setFont('helvetica', 'bold');
         doc.text('LUMINAIRE PHOTOMETRIC TEST REPORT', pageWidth / 2, y, { align: 'center' });
         y += 30;
 
-        // --- 2. TABLA DE DATOS MAQUETADA PROFESIONALMENTE ---
+        // --- TABLA DE DATOS ---
         const tableCol1 = margin;
         const tableCol2 = margin + 140;
         const tableCol3 = margin + 280;
         const tableCol4 = margin + 420;
         const rowHeight = 20;
-
-        // Dibuja el borde exterior de la tabla
-        doc.setLineWidth(1.5);
+        doc.setLineWidth(1);
         doc.rect(margin, y, pageWidth - margin * 2, rowHeight * 4);
-        // Dibuja la línea vertical central
         doc.line(tableCol3 - 10, y, tableCol3 - 10, y + rowHeight * 4);
 
         const drawRow = (yPos: number, label1: string, value1: any, label2: string, value2: any) => {
-            doc.setFontSize(9).setFont('helvetica', 'bold');
-            doc.text(label1, tableCol1 + 5, yPos + 14);
-            doc.text(label2, tableCol3 + 5, yPos + 14);
-            doc.setFont('helvetica', 'normal');
-            doc.text(String(value1), tableCol2 - 5, yPos + 14, { align: 'right' });
-            doc.text(String(value2), tableCol4 - 5, yPos + 14, { align: 'right' });
-            
-            // Dibuja la línea horizontal de la fila
-            if (yPos < y + rowHeight * 3) {
-                doc.setLineWidth(0.5);
-                doc.line(margin, yPos + rowHeight, pageWidth - margin, yPos + rowHeight);
-            }
+          doc.setFontSize(9).setFont('helvetica', 'bold');
+          doc.text(label1, tableCol1 + 5, yPos + 14);
+          doc.text(label2, tableCol3 + 5, yPos + 14);
+
+          doc.setFont('helvetica', 'normal');
+          doc.text(String(value1), tableCol2 - 5, yPos + 14, { align: 'right' });
+          doc.text(String(value2), tableCol4 - 5, yPos + 14, { align: 'right' });
+
+          if (yPos < y + rowHeight * 3) {
+            doc.setLineWidth(0.5);
+            doc.line(margin, yPos + rowHeight, pageWidth - margin, yPos + rowHeight);
+          }
         };
 
         let currentY = y;
@@ -88,25 +95,23 @@ export const GeneratePdfButton: React.FC<GeneratePdfButtonProps> = ({ reportData
         currentY += rowHeight;
         drawRow(currentY, 'RATED VOLTAGE (V)', reportData.ratedVoltage ?? '--', 'TOTAL FLUX (lm)', reportData.luminousFlux ?? '--');
         currentY += rowHeight;
-        drawRow(currentY, 'LAMPS INSIDE', reportData.lampsInside ?? 1, 'CIE CLASS', 'DIRECT'); // 'DIRECT' es un valor estándar para este tipo
-        
-        y = currentY + rowHeight + 40; // Aumentamos el espacio después de la tabla
+        drawRow(currentY, 'LAMPS INSIDE', reportData.lampsInside ?? 1, 'CIE CLASS', 'DIRECT');
+        y = currentY + rowHeight + 30;
 
-        // --- 3. DIAGRAMAS ---
+        // --- DIAGRAMAS ---
         doc.setFontSize(11).setFont('helvetica', 'bold');
         doc.text('LUMINOUS INTENSITY DISTRIBUTION DIAGRAM', margin, y);
         doc.text('CO PLANE ISOLUX DIAGRAM', pageWidth / 2 + 20, y);
         y += 20;
-        
+
         const diagramWidth = (pageWidth - margin * 3) / 2;
         const polarHeight = (polarCanvas.height * diagramWidth) / polarCanvas.width;
         const isoluxHeight = (isoluxCanvas.height * diagramWidth) / isoluxCanvas.width;
-        
         doc.addImage(polarImage, 'JPEG', margin, y, diagramWidth, polarHeight);
         doc.addImage(isoluxImage, 'JPEG', pageWidth / 2 + 10, y, diagramWidth, isoluxHeight);
-        y += Math.max(polarHeight, isoluxHeight) + 40; // Aumentamos el espacio después de los diagramas
+        y += Math.max(polarHeight, isoluxHeight) + 30;
 
-        // --- 4. PIE DE PÁGINA Y DISCLAIMER ---
+        // --- PIE DE PÁGINA ---
         if (y > doc.internal.pageSize.getHeight() - 60) y = doc.internal.pageSize.getHeight() - 60;
         doc.setLineWidth(0.5);
         doc.line(margin, y, pageWidth - margin, y);
@@ -115,20 +120,22 @@ export const GeneratePdfButton: React.FC<GeneratePdfButtonProps> = ({ reportData
         doc.text("This is a simulated report based on estimated photometric data.", margin, y);
         y += 12;
         doc.text("Generated by the SENS Photometric Estimation Tool, developed by LNS Hong Kong Digital Systems.", margin, y);
-        
-        // --- 5. GUARDAR ---
-        doc.save(`${reportData.productName || 'report'}.pdf`);
 
-      } catch (error) { console.error("PDF generation failed:", error); } 
-      finally { onEndRender(); setIsLoading(false); }
+        doc.save(`${reportData.productName || 'report'}.pdf`);
+      } catch (error) {
+        console.error("PDF generation failed:", error);
+      } finally {
+        onEndRender();
+        setIsLoading(false);
+      }
     }, 100);
   };
-  
+
   return (
     <button
       onClick={handleDownload}
       disabled={disabled || isLoading}
-      className="px-4 py-2 bg-green-600 text-white font-semibold rounded-md shadow-sm transition-colors duration-200 ease-in-out hover:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed disabled:opacity-70"
+      className={`px-4 py-2 bg-green-600 text-white font-semibold rounded-md shadow-sm transition-colors duration-200 ease-in-out hover:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed disabled:opacity-70 ${className ?? ''}`}
     >
       {isLoading ? 'Generando...' : 'Descargar Informe en PDF'}
     </button>

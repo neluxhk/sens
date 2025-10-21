@@ -6,6 +6,7 @@ import { IsoluxDiagram } from './components/IsoluxDiagram';
 import { GeneratePdfButton } from './components/GeneratePdfButton';
 // Utils
 import { generateEstimatedPhotometricData } from './utils/photometricEstimator';
+import { generateIesFileContent, generateLdtFileContent } from './utils/fileGenerators';
 // Types
 import {
   LuminaireFormData,
@@ -82,6 +83,36 @@ function App() {
     localStorage.removeItem(LOCALSTORAGE_KEY);
   };
 
+// --- MANEJADORES DE DESCARGA DE FICHEROS ---
+  
+  // Función genérica para descargar un archivo de texto
+  const downloadFile = (filename: string, content: string) => {
+    const element = document.createElement('a');
+    const file = new Blob([content], { type: 'text/plain;charset=utf-8' });
+    element.href = URL.createObjectURL(file);
+    element.download = filename;
+    document.body.appendChild(element);
+    element.click();
+    document.body.removeChild(element);
+  };
+
+  // Se ejecuta al pulsar "Descargar IES"
+  const handleDownloadIES = () => {
+    if (reportData && photometrics) {
+      const iesContent = generateIesFileContent(reportData, photometrics);
+      downloadFile(`${reportData.productName || 'report'}.ies`, iesContent);
+    }
+  };
+
+  // Se ejecuta al pulsar "Descargar LDT"
+  const handleDownloadLDT = () => {
+    if (reportData && photometrics) {
+      const ldtContent = generateLdtFileContent(reportData, photometrics);
+      downloadFile(`${reportData.productName || 'report'}.ldt`, ldtContent);
+    }
+  };
+
+
   // --- EFECTOS SECUNDARIOS (localStorage) ---
   useEffect(() => {
     localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify(formData));
@@ -102,15 +133,11 @@ function App() {
   // ===================================================================
 // COMIENZA EL BLOQUE DE REEMPLAZO (El 'return' final y correcto)
 // ===================================================================
-  // ===================================================================
-// COMIENZA EL BLOQUE DE REEMPLAZO (El 'return' final, limpio y correcto)
-// ===================================================================
-
   return (
     <div className="min-h-screen bg-gray-50 py-6 px-4">
       <div className="max-w-7xl mx-auto bg-white rounded-2xl shadow-md p-6 lg:p-8 space-y-6">
         <h1 className="text-2xl font-semibold text-gray-800 text-center">
-          SENS Photometric Estimator by LNS Hong Kong
+          SENS Photometric Estimator by LNS
         </h1>
 
         <div className="flex flex-col lg:flex-row lg:space-x-8">
@@ -136,52 +163,75 @@ function App() {
                   <button onClick={() => setActiveChart('isolux')} className={`px-4 py-2 rounded-lg ${activeChart === 'isolux' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700'}`}>Isolux Diagram</button>
                 </div>
                 
-                {/* --- ESTE ES EL ÚNICO LUGAR DONDE SE MUESTRAN LOS DIAGRAMAS --- */}
                 <div className="pt-10">
                   {photometrics && activeChart === 'polar' && <PolarDiagram data={photometrics} title={reportData?.productName ?? 'Luminaire'} />}
                   {photometrics && activeChart === 'isolux' && <IsoluxDiagram photometricData={photometrics} />}
-
                 </div>
               </div>
 
-              {/* --- BOTÓN DE DESCARGA (siempre visible) --- */}
-              <div className="pt-6 text-center">
-                <GeneratePdfButton
-                  reportData={reportData}
-                  disabled={!reportData}
-                  onStartRender={() => {
-  const ids = { polarId: 'polar-for-pdf', isoluxId: 'isolux-for-pdf' };
-  setPdfRenderIds({ polar: ids.polarId, isolux: ids.isoluxId });
-  return ids;
-}}
-                  onEndRender={() => setPdfRenderIds(null)}
-                />
-              </div>
+              {/* --- SECCIÓN DE DESCARGA (Ahora limpia y completa) --- */}
+              {/* --- SECCIÓN DE DESCARGA UNIFICADA --- */}
+{/* --- SECCIÓN DE DESCARGA UNIFICADA (Toolbar Profesional con Separadores) --- */}
+<div className="pt-6 text-center">
+  {reportData && (
+    <p className="text-md font-semibold text-gray-700 mb-2">
+      Máx: {reportData.Imax?.toFixed(0)} cd
+    </p>
+  )}
+
+  <div className="inline-flex shadow-sm rounded-md overflow-hidden border border-gray-300">
+    {/* Botón Descargar IES */}
+    <button
+      onClick={handleDownloadIES}
+      disabled={!reportData || !photometrics}
+      className="px-4 py-2 bg-blue-600 text-white text-sm font-medium hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed disabled:opacity-50"
+    >
+      Descargar IES
+    </button>
+
+    {/* Separador vertical */}
+    <div className="w-px bg-gray-300"></div>
+
+    {/* Botón Descargar LDT */}
+    <button
+      onClick={handleDownloadLDT}
+      disabled={!reportData || !photometrics}
+      className="px-4 py-2 bg-blue-600 text-white text-sm font-medium hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed disabled:opacity-50"
+    >
+      Descargar LDT
+    </button>
+
+    {/* Separador vertical */}
+    <div className="w-px bg-gray-300"></div>
+
+    {/* Botón Generar PDF */}
+   <GeneratePdfButton
+  reportData={reportData}
+  disabled={!reportData || !photometrics}
+  onStartRender={() => {
+    setPdfRenderIds({ polar: 'polar-for-pdf', isolux: 'isolux-for-pdf' });
+    return { polarId: 'polar-for-pdf', isoluxId: 'isolux-for-pdf' };
+  }}
+  onEndRender={() => setPdfRenderIds(null)}
+/>
+  </div>
+</div>
+
+
+
 
               {/* --- DIV OCULTO PARA EL PDF (corregido y limpio) --- */}
-             {/* ----- DIV OCULTO (AHORA CON TAMAÑO FIJO) ----- */}
-              {pdfRenderIds && photometrics && (
-                <div
-                  style={{
-                    position: 'absolute',
-                    left: '-9999px', // Lo manda fuera de la pantalla
-                    top: 0,
-                    zIndex: -1,
-                    backgroundColor: 'white',
-                    // --- LA LÍNEA CLAVE ---
-                    // Le damos un ancho fijo y realista para que los gráficos se dibujen bien
-                    width: '600px', 
-                  }}
-                >
-                  {/* El padding da "aire" a la captura */}
-                  <div id={pdfRenderIds.polar} style={{ padding: '20px' }}>
-                    <PolarDiagram data={photometrics} title="" />
-                  </div>
-                  <div id={pdfRenderIds.isolux} style={{ padding: '20px', marginTop: '2rem' }}>
-                    <IsoluxDiagram photometricData={photometrics} isPdfMode={true} />
-                  </div>
-                </div>
-              )}
+             {pdfRenderIds && photometrics && (
+  <div style={{ position: 'absolute', top: 0, left: 0, opacity: 0, pointerEvents: 'none', width: '600px', backgroundColor: 'white' }}>
+    <div id={pdfRenderIds.polar} style={{ padding: '20px' }}>
+      <PolarDiagram data={photometrics} title="" isPdfMode={true} />
+    </div>
+    <div id={pdfRenderIds.isolux} style={{ padding: '20px', marginTop: '2rem' }}>
+      <IsoluxDiagram photometricData={photometrics} isPdfMode={true} />
+    </div>
+  </div>
+)}
+
             </div>
           </div>
         </div>
@@ -189,8 +239,8 @@ function App() {
     </div>
   );
 }
-
 export default App;
+
 // ===================================================================
 // TERMINA EL BLOQUE DE REEMPLAZO
 // ===================================================================

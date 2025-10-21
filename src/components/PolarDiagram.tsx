@@ -5,6 +5,7 @@ import { PhotometricData } from '../types/data';
 interface PolarDiagramProps {
 data: PhotometricData | null;
 title?: string;
+isPdfMode?: boolean;
 }
 export const PolarDiagram: React.FC<PolarDiagramProps> = ({ data, title }) => {
 if (!data || !data.verticalAngles?.length || !data.candelaValues?.length) return null;
