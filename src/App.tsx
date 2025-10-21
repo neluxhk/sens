@@ -53,7 +53,7 @@ function App() {
   const [activeChart, setActiveChart] = useState<'polar' | 'isolux'>('polar');
 
   // --- ESTADO PARA RESULTADOS FOTOMÉTRICOS (tu código original) ---
-  const [lastValidResult, setLastValidResult] = useState<FullLuminaireData | null>(null);
+  const [lastValidResult, setLastValidResult] = useState<FullLuminaireData | null>(() => generateEstimatedPhotometricData(defaultForm));
 
   // --- ESTADO PARA LA GENERACIÓN DEL PDF (tu código original) ---
   const [pdfRenderIds, setPdfRenderIds] = useState<{ polar: string; isolux: string } | null>(null);
@@ -229,8 +229,9 @@ function App() {
           </div>
 
           {/* --- PANEL DERECHO (Asociado solo al ESTIMADOR) --- */}
-          <div className={`lg:w-1/2 space-y-6 mt-8 lg:mt-0`}>
-             <div className={`sticky top-8 transition-opacity duration-300 ${activeMode === 'importer' ? 'opacity-20 pointer-events-none' : 'opacity-100'}`}>
+          {activeMode === 'estimator' && (
+            <div className="lg:w-1/2 space-y-6 mt-8 lg:mt-0">
+              <div className="sticky top-8">
                 <h2 className="text-xl font-semibold text-gray-700 text-center mb-4">
                   Diagramas del Estimador
                 </h2>
@@ -297,8 +298,9 @@ function App() {
                     </div>
                   </div>
                 )}
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
     </div>
