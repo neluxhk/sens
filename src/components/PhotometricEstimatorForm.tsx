@@ -123,13 +123,17 @@ const PhotometricEstimatorForm: React.FC<PhotometricEstimatorFormProps> = ({ for
   // --- OTRAS FUNCIONES DEL FORMULARIO ---
 
   const applyPreset = useCallback((value: string) => {
-    const selectedPreset = luminairePresets[value];
-    if (selectedPreset) {
-      onFormChange(selectedPreset as LuminaireFormData);
-      setErrors({});
-      setDirty(true);
-    }
-  }, [onFormChange]);
+  // Buscar el preset correcto usando la clave exacta
+  const selectedPreset = luminairePresets[value];
+  if (selectedPreset) {
+    // Merge con formData actual para no perder reportData ni otros campos
+    onFormChange({ ...formData, ...selectedPreset });
+    setErrors({});
+    setDirty(true);
+  } else {
+    console.warn(`Preset no encontrado para: ${value}`);
+  }
+}, [formData, onFormChange]);
   
   const validate = (data: LuminaireFormData) => {
     const newErrors: Record<string, string> = {};

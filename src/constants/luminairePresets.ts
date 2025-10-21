@@ -4,6 +4,7 @@ import { LuminaireFormData } from '../types/data';
 
 export const LOCALSTORAGE_KEY = 'sens_photometric_form_v2';
 
+// Opciones que aparecen en el select de "Luminaire Type"
 export const luminaireTypeOptions = [
   { value: 'Downlight-TrackSpotlight', label: 'Downlight / Track Spotlight' },
   { value: 'Industrial Projector', label: 'Industrial Projector' },
@@ -11,8 +12,9 @@ export const luminaireTypeOptions = [
   { value: 'IndustrialHighbay', label: 'Industrial Highbay' },
 ];
 
+// Presets de cada tipo de luminaria
 export const luminairePresets: Record<string, Partial<LuminaireFormData>> = {
-  'Downlight': {
+  'Downlight-TrackSpotlight': {
     productName: 'Office Downlight 60°',
     power: 15,
     luminousFlux: 1600,
@@ -24,10 +26,10 @@ export const luminairePresets: Record<string, Partial<LuminaireFormData>> = {
     dimensions: 'Ø150 x 80mm',
     cct: 4000,
     cri: 90,
-    luminaireType: 'Downlight',
+    luminaireType: 'Downlight-TrackSpotlight',
   },
   'Industrial Projector': {
-    productName: 'Facade Projector 24°',
+    productName: 'Facade Industrial Projector 24°',
     power: 25,
     luminousFlux: 2800,
     beamAngle: 24,
