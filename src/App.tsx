@@ -71,9 +71,13 @@ function App() {
   }, [estimationResult]);
 
   // --- currentResult: usa el resultado reciente o el último válido ---
-  const currentResult = estimationResult?.photometrics ? estimationResult : lastValidResult;
-  const photometrics = currentResult?.photometrics ?? null;
-  const reportData = currentResult?.reportData ?? null;
+  const currentResult = estimationResult ?? lastValidResult ?? {
+  photometrics: null,
+  reportData: { ...defaultForm, Imax: 0, calculatedEfficiency: 'N/A' },
+};
+
+const photometrics = currentResult.photometrics;
+const reportData = currentResult.reportData;
 
   // --- MANEJADORES DE ACCIONES ---
   const handleFormChange = (newFormData: LuminaireFormData) => setFormData(newFormData);
@@ -191,7 +195,7 @@ return (
                 <div className="inline-flex shadow-sm rounded-md overflow-hidden border border-gray-300">
                   <button
                     onClick={handleDownloadIES}
-                    disabled={!photometrics}
+                    disabled={!photometrics && !reportData}
                     className="px-4 py-2 bg-blue-600 text-white text-sm font-medium hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     Descargar IES
@@ -199,7 +203,7 @@ return (
                   <div className="w-px bg-gray-300"></div>
                   <button
                     onClick={handleDownloadLDT}
-                    disabled={!photometrics}
+                    disabled={!photometrics && !reportData}
                     className="px-4 py-2 bg-blue-600 text-white text-sm font-medium hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     Descargar LDT
@@ -207,7 +211,7 @@ return (
                   <div className="w-px bg-gray-300"></div>
                   <GeneratePdfButton
                     reportData={reportData}
-                    disabled={!photometrics}
+                    disabled={!photometrics && !reportData}
                     onStartRender={() => {
                       setPdfRenderIds({ polar: 'polar-for-pdf', isolux: 'isolux-for-pdf' });
                       return { polarId: 'polar-for-pdf', isoluxId: 'isolux-for-pdf' };
