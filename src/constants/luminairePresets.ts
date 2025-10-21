@@ -26,7 +26,7 @@ export const luminairePresets: Record<string, Partial<LuminaireFormData>> = {
     cri: 90,
     luminaireType: 'Downlight',
   },
-  'Projector': {
+  'Industrial Projector': {
     productName: 'Facade Projector 24°',
     power: 25,
     luminousFlux: 2800,
@@ -38,7 +38,7 @@ export const luminairePresets: Record<string, Partial<LuminaireFormData>> = {
     dimensions: '200x150x90mm',
     cct: 4000,
     cri: 80,
-    luminaireType: 'Projector',
+    luminaireType: 'Industrial Projector',
   },
   'LinearProfile': {
     productName: 'Asymmetric Linear Profile',
