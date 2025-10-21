@@ -87,13 +87,17 @@ export const GeneratePdfButton: React.FC<GeneratePdfButtonProps> = ({
             doc.line(margin, yPos + rowHeight, pageWidth - margin, yPos + rowHeight);
           }
         };
+        const formattedPower = reportData.power ? `${reportData.power.toFixed(1)} W` : '--';
+        const formattedImax = reportData.Imax ? reportData.Imax.toFixed(0) : 'N/A';
+        const formattedFlux = reportData.luminousFlux ? reportData.luminousFlux.toFixed(0) : '--';
 
-        let currentY = y;
-        drawRow(currentY, 'MODEL', reportData.productName, 'Imax (cd)', reportData.Imax?.toFixed(0) ?? 'N/A');
+
+       let currentY = y;
+        drawRow(currentY, 'MODEL', reportData.productName, 'Imax (cd)', formattedImax);
         currentY += rowHeight;
-        drawRow(currentY, 'NOMINAL POWER (W)', `${reportData.power ?? '--'} W`, 'EFFICIENCY', reportData.calculatedEfficiency ?? 'N/A');
+        drawRow(currentY, 'NOMINAL POWER (W)', formattedPower, 'EFFICIENCY', reportData.calculatedEfficiency ?? 'N/A');
         currentY += rowHeight;
-        drawRow(currentY, 'RATED VOLTAGE (V)', reportData.ratedVoltage ?? '--', 'TOTAL FLUX (lm)', reportData.luminousFlux ?? '--');
+        drawRow(currentY, 'RATED VOLTAGE (V)', reportData.ratedVoltage ?? '--', 'TOTAL FLUX (lm)', formattedFlux);
         currentY += rowHeight;
         drawRow(currentY, 'LAMPS INSIDE', reportData.lampsInside ?? 1, 'CIE CLASS', 'DIRECT');
         y = currentY + rowHeight + 30;

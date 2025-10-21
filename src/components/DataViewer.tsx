@@ -1,0 +1,73 @@
+// src/components/DataViewer.tsx
+
+import React, { useState } from 'react';
+import { PolarDiagram } from './PolarDiagram';
+import { IsoluxDiagram } from './IsoluxDiagram';
+import { GeneratePdfButton } from './GeneratePdfButton';
+import { LuminaireReportData, PhotometricData } from '../types/data';
+
+interface DataViewerProps {
+  reportData: LuminaireReportData;
+  photometrics: PhotometricData;
+  onReset: () => void; // Función para volver a la vista de importación
+}
+
+export const DataViewer: React.FC<DataViewerProps> = ({ reportData, photometrics, onReset }) => {
+  const [activeChart, setActiveChart] = useState<'polar' | 'isolux'>('polar');
+  const [pdfRenderIds, setPdfRenderIds] = useState<{ polar: string; isolux: string } | null>(null);
+
+  return (
+    <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+      <div className="flex justify-between items-center border-b pb-4 mb-4">
+        <div>
+          <h2 className="text-xl font-semibold text-gray-800">Análisis de Archivo Importado</h2>
+          <p className="text-sm text-gray-600">{reportData.productName || 'Datos fotométricos'}</p>
+        </div>
+        <button 
+          onClick={onReset}
+          className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-md transition duration-150"
+        >
+          Importar otro archivo
+        </button>
+      </div>
+
+      {/* Controles de Diagrama */}
+      <div className="flex justify-center gap-4 mb-4">
+        <button onClick={() => setActiveChart('polar')} className={`px-4 py-2 rounded-lg ${activeChart === 'polar' ? 'bg-blue-600 text-white' : 'bg-gray-200'}`}>
+          Diagrama Polar
+        </button>
+        <button onClick={() => setActiveChart('isolux')} className={`px-4 py-2 rounded-lg ${activeChart === 'isolux' ? 'bg-blue-600 text-white' : 'bg-gray-200'}`}>
+          Diagrama Isolux
+        </button>
+      </div>
+
+      {/* Diagramas */}
+      <div className="pt-6">
+        {activeChart === 'polar' && <PolarDiagram data={photometrics} title={reportData.productName ?? ''} />}
+        {activeChart === 'isolux' && <IsoluxDiagram photometricData={photometrics} />}
+      </div>
+
+      {/* Botón de PDF */}
+      <div className="pt-8 text-center">
+        <GeneratePdfButton
+          reportData={reportData}
+          disabled={!photometrics}
+          onStartRender={() => {
+            const ids = { polar: 'imported-polar-pdf', isolux: 'imported-isolux-pdf' };
+            setPdfRenderIds(ids);
+            return { polarId: ids.polar, isoluxId: ids.isolux };
+          }}
+          onEndRender={() => setPdfRenderIds(null)}
+        />
+      </div>
+
+      {/* Div oculto para renderizar el PDF */}
+      {pdfRenderIds && (
+        <div style={{ position: 'absolute', left: '-9999px', width: '600px', backgroundColor: 'white' }}>
+          <div id={pdfRenderIds.polar}><PolarDiagram data={photometrics} title="" isPdfMode /></div>
+          <div id={pdfRenderIds.isolux} style={{ marginTop: '2rem' }}><IsoluxDiagram photometricData={photometrics} isPdfMode /></div>
+        </div>
+      )}
+    </div>
+  );
+};
