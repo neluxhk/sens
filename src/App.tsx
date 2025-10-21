@@ -110,7 +110,7 @@ function App() {
     <div className="min-h-screen bg-gray-50 py-6 px-4">
       <div className="max-w-7xl mx-auto bg-white rounded-2xl shadow-md p-6 lg:p-8 space-y-6">
         <h1 className="text-2xl font-semibold text-gray-800 text-center">
-          Photometric Estimator
+          SENS Photometric Estimator by LNS Hong Kong
         </h1>
 
         <div className="flex flex-col lg:flex-row lg:space-x-8">
