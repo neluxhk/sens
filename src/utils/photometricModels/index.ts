@@ -1,20 +1,19 @@
-// src/utils/photometricModels/index.ts
+// ------------------------------------------------------------
+// Central export hub for all photometric model generators
+// ------------------------------------------------------------
 
-/**
- * Este archivo actúa como el "punto de entrada" público para la carpeta de modelos fotométricos.
- * Su única responsabilidad es importar todas las funciones de modelo de sus respectivos
- * archivos y re-exportarlas.
- *
- * De esta manera, cualquier parte de la aplicación que necesite un modelo (como el "director de orquesta"
- * en photometricEstimator.ts) puede importarlo desde una única ubicación ('./photometricModels'),
- * sin necesidad de saber los nombres de los archivos internos (downlight.ts, wallwasher.ts, etc.).
- * Esto hace que el código sea más limpio y fácil de mantener.
- */
+// --- Conic luminaires (Downlight, Highbay, Projector) ---
+export { generateConeLuminaireModel } from './coneLuminaire';
 
-// A medida que añadamos más modelos en el futuro, simplemente añadiremos una línea aquí.
-// src/utils/photometricModels/index.ts
+// --- Industrial projectors (flat / open reflectors) ---
+export { generateIndustrialProjectorModel } from './industrialProjector';
 
-export * from './downlight';
-export * from './linearDouble';
-export * from './linearDown';
-export * from './wallwasher';
+// --- Linear luminaires ---
+export { generateLinearDownModel } from './linearDown';
+export { generateLinearDoubleModel } from './linearDouble';
+
+// --- Wallwasher luminaires ---
+export { generateWallwasherModel } from './wallwasher';
+
+// --- Shared utilities used internally by models ---
+export * from './sharedUtils';

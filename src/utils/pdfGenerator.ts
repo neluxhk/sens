@@ -74,39 +74,49 @@ export async function generatePdfReport(
 
 // REEMPLAZA LA FUNCIÓN drawTwoColumnTable POR ESTA:
 const drawTwoColumnTable = () => {
-    const tableWidth = doc.internal.pageSize.getWidth() - (startX * 2);
-    const col1X_label = startX + 2;
-    const col1X_value = startX + 45; // Coordenada X para el valor de la columna 1
-    const col2X_label = startX + (tableWidth / 2) + 2;
-    const col2X_value = startX + (tableWidth / 2) + 45; // Coordenada X para el valor de la columna 2
-    
-    doc.setFont('helvetica', 'bold');
-    doc.rect(startX, cursorY, tableWidth, LINE_HEIGHT);
-    doc.text('DATA OF LAMP', col1X_label, cursorY + LINE_HEIGHT - 2);
-    doc.text('PHOTOMETRIC DATA', col2X_label, cursorY + LINE_HEIGHT - 2);
-    cursorY += LINE_HEIGHT;
-    
-    doc.setFont('helvetica', 'normal');
-    const tableData = [
-      ['MODEL:', reportData.productName, 'Imax (cd):', reportData.calculatedImax?.toFixed(0)],
-      ['NOMINAL POWER (W):', reportData.power, 'Eff (lm/W):', reportData.calculatedEfficiency],
-      ['NOMINAL FLUX (lm):', reportData.luminousFlux, 'BEAM ANGLE:', reportData.beamAngle ? `${reportData.beamAngle}°` : '--'],
-      ['LAMPS INSIDE:', '1', 'CCT / CRI:', (reportData.cct && reportData.cri) ? `${reportData.cct}K / ${reportData.cri}Ra` : '--'],
-    ];
+  const tableWidth = doc.internal.pageSize.getWidth() - (startX * 2);
+  const col1X_label = startX + 2;
+  const col1X_value = startX + 45; // Coordenada X para el valor de la columna 1
+  const col2X_label = startX + (tableWidth / 2) + 2;
+  const col2X_value = startX + (tableWidth / 2) + 45; // Coordenada X para el valor de la columna 2
 
-    tableData.forEach(row => {
-      doc.rect(startX, cursorY, tableWidth, LINE_HEIGHT);
-      // Columna 1
-      doc.text(row[0], col1X_label, cursorY + LINE_HEIGHT - 2);
-      doc.text(String(row[1] || '--'), col1X_value, cursorY + LINE_HEIGHT - 2);
-      // Columna 2
-      doc.text(row[2], col2X_label, cursorY + LINE_HEIGHT - 2);
-      doc.text(String(row[3] || '--'), col2X_value, cursorY + LINE_HEIGHT - 2);
-      
-      cursorY += LINE_HEIGHT;
-    });
+  doc.setFont('helvetica', 'bold');
+  doc.rect(startX, cursorY, tableWidth, LINE_HEIGHT);
+  doc.text('DATA OF LAMP', col1X_label, cursorY + LINE_HEIGHT - 2);
+  doc.text('PHOTOMETRIC DATA', col2X_label, cursorY + LINE_HEIGHT - 2);
+  cursorY += LINE_HEIGHT;
+
+  doc.setFont('helvetica', 'normal');
+
+  // --- Tipado explícito para tableData ---
+  const tableData = [
+  ['MODEL:', reportData.productName, 'Imax (cd):', reportData.Imax?.toFixed(0)],
+  ['NOMINAL POWER (W):', reportData.power, 'Eff (lm/W):', reportData.calculatedEfficiency],
+  ['NOMINAL FLUX (lm):', reportData.luminousFlux, 'BEAM ANGLE:', reportData.beamAngle ? `${reportData.beamAngle}°` : '--'],
+  ['LAMPS INSIDE:', reportData.lampsInside ?? '--', 'CCT / CRI:', (reportData.cct && reportData.cri) ? `${reportData.cct}K / ${reportData.cri}Ra` : '--'],
+  ['NOTES:', reportData.notes || '--', '', ''],
+];
+
+
+  tableData.forEach((row) => {
+    // Dibuja rectángulo de fila
+    doc.rect(startX, cursorY, tableWidth, LINE_HEIGHT);
+
+    // Columna 1
+    doc.text(String(row[0]), col1X_label, cursorY + LINE_HEIGHT - 2);
+    doc.text(String(row[1] ?? '--'), col1X_value, cursorY + LINE_HEIGHT - 2);
+
+    // Columna 2
+    doc.text(String(row[2]), col2X_label, cursorY + LINE_HEIGHT - 2);
+    doc.text(String(row[3] ?? '--'), col2X_value, cursorY + LINE_HEIGHT - 2);
+
     cursorY += LINE_HEIGHT;
-  };
+  });
+
+  // Espacio después de la tabla
+  cursorY += LINE_HEIGHT;
+};
+
   
   drawTwoColumnTable();
   

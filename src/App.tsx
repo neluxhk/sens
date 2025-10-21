@@ -1,230 +1,196 @@
-// src/App.tsx
-
-import React, { useEffect, useState } from 'react';
-
-// Componentes UI
-import { DownloadIesButton } from './components/DownloadIesButton';
-import { DownloadLdtButton } from './components/DownloadLdtButton';
-import { PhotometricEstimatorForm } from './components/PhotometricEstimatorForm';
-import { PhotometricUploader } from './components/PhotometricUploader';
+import React, { useState, useMemo, useEffect } from 'react';
+// Components
+import PhotometricEstimatorForm from './components/PhotometricEstimatorForm';
 import { PolarDiagram } from './components/PolarDiagram';
-import { GeneratePdfButton } from './components/GeneratePdfButton';
-import { LuminaireDataForm } from './components/LuminaireDataForm';
 import { IsoluxDiagram } from './components/IsoluxDiagram';
-
-// <<<< CAMBIO 1: Rutas de importación actualizadas >>>>
-// Lógica de negocio (importamos solo la función principal)
+import { GeneratePdfButton } from './components/GeneratePdfButton';
+// Utils
 import { generateEstimatedPhotometricData } from './utils/photometricEstimator';
-// Tipos (importamos desde el archivo central de tipos)
-import { EstimatorFormData, FullLuminaireData, PhotometricData } from './types/data';
+// Types
+import {
+  LuminaireFormData,
+  PhotometricData,
+  LuminaireReportData,
+} from './types/data';
 
-const DIAGRAM_ID = 'polar-diagram-container';
+// Clave para almacenamiento local
+const LOCALSTORAGE_KEY = 'sens_photometric_form_v2';
 
-function App() {
-  // El estado ahora usará nuestro tipo FullLuminaireData, que es más robusto.
-  const [luminaireData, setLuminaireData] = useState<FullLuminaireData>({
-    photometrics: null,
-    reportData: null,
-  });
-
-  const [activeTab, setActiveTab] = useState<'estimate' | 'upload'>('estimate');
-  const [isDataFromFile, setIsDataFromFile] = useState(false);
-  const [activeChart, setActiveChart] = useState<'polar' | 'isolux'>('polar');
-
-  // Inicialización: generamos una curva por defecto.
- // EL NUEVO BLOQUE CORREGIDO
-useEffect(() => {
-  // Solo generamos una curva por defecto si la pestaña activa al cargar es 'estimate'.
-  if (activeTab === 'estimate') {
-    const defaultForm: EstimatorFormData = {
-      luminousFlux: 1600, beamAngle: 60, opticsType: 'Difusor Opal',
-      emissionShape: 'Simétrica', luminaireType: 'Downlight', power: 15,
-      productName: 'Downlight Oficina 60°', dimensions: 'Ø150 x 80mm',
-      cct: 4000, cri: 90,
-      spec: 'DL-OFFICE-60D', // Asegúrate de que este campo exista o quítalo
-    };
-    
-    const result: FullLuminaireData = generateEstimatedPhotometricData(defaultForm);
-    setLuminaireData(result);
-  } else {
-    // Si la pestaña activa no es 'estimate' (ej. 'upload'), nos aseguramos de que el estado esté limpio.
-    setLuminaireData({ photometrics: null, reportData: null });
-  }
-}, [activeTab]); // <- La dependencia ahora es 'activeTab'
-
-  const resetState = () => {
-    setLuminaireData({ photometrics: null, reportData: null });
-    setIsDataFromFile(false);
-    setActiveChart('polar');
-    try { localStorage.removeItem('sens_photometric_form_v1'); } catch (_) { }
-  };
-
-  const handleTabChange = (tab: 'estimate' | 'upload') => {
-    if (tab !== activeTab) resetState();
-    setActiveTab(tab);
-  };
-
-  const handleGenerateCurve = (formData: EstimatorFormData) => {
-    // <<<< CAMBIO 3: Lógica de generación actualizada >>>>
-    // La llamada es mucho más limpia. La función hace todo el trabajo.
-    const result: FullLuminaireData = generateEstimatedPhotometricData(formData);
-    setLuminaireData(result);
-    setIsDataFromFile(false);
-    setActiveChart('polar');
-    document.getElementById(DIAGRAM_ID)?.scrollIntoView({ behavior: 'smooth' });
-  };
-
-  // EN: src/App.tsx
-
-// REEMPLAZA ESTA FUNCIÓN:
-// const handleDataParsed = (parsedResult: { photometrics: PhotometricData; reportData: any }) => {
-//   const calculatedImax = Math.max(0, ...parsedResult.photometrics.candelaValues.flat());
-//   setLuminaireData({
-//     photometrics: parsedResult.photometrics,
-//     reportData: { ...parsedResult.reportData, imax: Math.round(calculatedImax) }
-//   });
-//   setIsDataFromFile(true);
-//   document.getElementById(DIAGRAM_ID)?.scrollIntoView({ behavior: 'smooth' });
-// };
-
-// POR ESTA NUEVA VERSIÓN:
-// EN: src/App.tsx
-
-// REEMPLAZA TU FUNCIÓN handleDataParsed POR ESTA VERSIÓN:
-
-// EN: src/App.tsx
-
-// REEMPLAZA TU FUNCIÓN handleDataParsed POR ESTA VERSIÓN:
-
-// EN: src/App.tsx
-
-// REEMPLAZA TU FUNCIÓN handleDataParsed POR ESTA:
-// EN: src/App.tsx
-
-// EN: src/App.tsx
-
-const handleDataParsed = (parsedResult: { photometrics: PhotometricData; reportData: any }) => {
-  console.log("--- DATOS RECIBIDOS DEL PARSER ---");
-    console.log("Datos Fotométricos:", parsedResult.photometrics);
-    console.log("Número de Ángulos Verticales:", parsedResult.photometrics.verticalAngles.length);
-    console.log("Número de Filas de Candelas:", parsedResult.photometrics.candelaValues.length);
-    console.log("Datos del Informe:", parsedResult.reportData);
-    console.log("---------------------------------");
-    const rawData = parsedResult.reportData;
-
-    const efficiency = (rawData.luminousFlux && rawData.power)
-      ? `${(rawData.luminousFlux / rawData.power).toFixed(1)} lm/W`
-      : 'N/A';
-
-    const normalizedReportData = {
-      // Campos estándar que usa toda la app <-- Campos que vienen del nuevo parser
-      productName:          rawData.productName || 'Archivo importado', // NAME
-      luminaireType:        rawData.luminaireType || '',                // TYPE
-      dimensions:           rawData.dimensions || '',                   // DIM.
-      spec:                 rawData.spec || '',                         // SPEC.
-      manufacturer:         rawData.manufacturer || '',
-      power:                rawData.power || null,
-      luminousFlux:         rawData.luminousFlux || null,
-      
-      // Campos calculados
-      calculatedImax:       rawData.imax || 0,
-      calculatedEfficiency: efficiency,
-      
-      // Campos extra que el pdfGenerator y LuminaireDataForm pueden usar
-      model:                rawData.model || rawData.productName || '', // MODEL
-      lampsInside:          rawData.numLamps || 1,
-
-      // Campos que no vienen en el archivo LDT (quedarán vacíos)
-      beamAngle:            undefined,
-      cct:                  undefined,
-      cri:                  undefined,
-    };
-
-    setLuminaireData({
-      photometrics: parsedResult.photometrics,
-      reportData: normalizedReportData,
-    });
-
-    setIsDataFromFile(true);
-    document.getElementById(DIAGRAM_ID)?.scrollIntoView({ behavior: 'smooth' });
+// Estado inicial del formulario
+const defaultForm: LuminaireFormData = {
+  productName: 'Office Downlight 60°',
+  luminaireType: 'Downlight',
+  dimensions: 'Ø150 x 80mm',
+  power: 15,
+  luminousFlux: 1600,
+  beamAngle: 60,
+  opticsType: 'Opal Diffuser',
+  emissionShape: 'Symmetric',
+  symmetry: 'symmetrical',
+  photometrics: null,
+  cct: 4000,
+  cri: 90,
+  spec: 'DL-OFFICE-60D',
+  Imax: 0,
+  ratedVoltage: '',
 };
 
-  const handleReportDataChange = (newData: any) => {
-    setLuminaireData(prev => ({ ...prev, reportData: newData }));
+// ===================================================================
+// APP COMPONENT
+// ===================================================================
+function App() {
+  // --- ESTADOS PRINCIPALES ---
+  const [formData, setFormData] = useState<LuminaireFormData>(defaultForm);
+  const [activeChart, setActiveChart] = useState<'polar' | 'isolux'>('polar');
+
+  // --- ESTADO PARA RESULTADOS FOTOMÉTRICOS ---
+  const [lastValidResult, setLastValidResult] = useState<{
+    photometrics: PhotometricData | null;
+    reportData: LuminaireReportData | null;
+  } | null>(null);
+
+  // --- ESTADO PARA LA GENERACIÓN DEL PDF ---
+  const [pdfRenderIds, setPdfRenderIds] = useState<{ polar: string; isolux: string } | null>(null);
+
+  // --- CÁLCULO DERIVADO CON useMemo (con manejo de errores) ---
+  const estimationResult = useMemo(() => {
+    try {
+      return generateEstimatedPhotometricData(formData);
+    } catch (err) {
+      console.error('Error al generar datos fotométricos:', err);
+      return null;
+    }
+  }, [formData]);
+
+  // --- useEffect para actualizar lastValidResult cuando hay datos válidos ---
+  useEffect(() => {
+    if (estimationResult?.photometrics) {
+      setLastValidResult(estimationResult);
+    }
+  }, [estimationResult]);
+
+  // --- currentResult: usa el resultado reciente o el último válido ---
+  const currentResult = estimationResult?.photometrics ? estimationResult : lastValidResult;
+  const photometrics = currentResult?.photometrics ?? null;
+  const reportData = currentResult?.reportData ?? null;
+
+  // --- MANEJADORES DE ACCIONES ---
+  const handleFormChange = (newFormData: LuminaireFormData) => setFormData(newFormData);
+
+  const handleReset = () => {
+    setFormData(defaultForm);
+    localStorage.removeItem(LOCALSTORAGE_KEY);
   };
 
+  // --- EFECTOS SECUNDARIOS (localStorage) ---
+  useEffect(() => {
+    localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify(formData));
+  }, [formData]);
+
+  useEffect(() => {
+    const savedData = localStorage.getItem(LOCALSTORAGE_KEY);
+    if (savedData) {
+      try {
+        const parsed = JSON.parse(savedData);
+        setFormData({ ...defaultForm, ...parsed });
+      } catch (err) {
+        console.error('Error parsing saved form data:', err);
+      }
+    }
+  }, []);
+
+  // ===================================================================
+// COMIENZA EL BLOQUE DE REEMPLAZO (El 'return' final y correcto)
+// ===================================================================
+  // ===================================================================
+// COMIENZA EL BLOQUE DE REEMPLAZO (El 'return' final, limpio y correcto)
+// ===================================================================
+
   return (
-    <div className="container mx-auto p-4 lg:p-6 font-sans bg-slate-50 min-h-screen flex flex-col">
-      <header className="text-center mb-8">
-        <h1 className="text-3xl lg:text-4xl font-bold text-gray-800">Generador de Informes Fotométricos</h1>
-        <p className="text-md lg:text-lg text-gray-600 mt-2">Crea curvas fotométricas a partir de parámetros o de un archivo IES / LDT.</p>
-      </header>
+    <div className="min-h-screen bg-gray-50 py-6 px-4">
+      <div className="max-w-7xl mx-auto bg-white rounded-2xl shadow-md p-6 lg:p-8 space-y-6">
+        <h1 className="text-2xl font-semibold text-gray-800 text-center">
+          Photometric Estimator
+        </h1>
 
-      <main className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8 flex-grow">
-        <div className="flex flex-col space-y-6">
-          <div className="border rounded-lg shadow-md bg-white">
-            <div className="flex border-b">
-              <button onClick={() => handleTabChange('estimate')} className={`flex-1 text-center px-4 py-3 font-semibold transition-colors duration-200 ${activeTab === 'estimate' ? 'border-b-2 border-blue-500 text-blue-600 bg-blue-50' : 'text-gray-500 hover:text-blue-500'}`}>
-                Generar Curva (Estimada)
-              </button>
-              <button onClick={() => handleTabChange('upload')} className={`flex-1 text-center px-4 py-3 font-semibold transition-colors duration-200 ${activeTab === 'upload' ? 'border-b-2 border-blue-500 text-blue-600 bg-blue-50' : 'text-gray-500 hover:text-blue-500'}`}>
-                Subir Archivo (Preciso)
-              </button>
-            </div>
-            <div className="p-4">
-              {activeTab === 'estimate' && (
-                <>
-                  {/* Pasamos onReset al formulario, no a un botón interno del formulario */}
-                  <PhotometricEstimatorForm onGenerate={handleGenerateCurve} onReset={resetState} />
-                  
-                  {/* Los botones de descarga ahora leen directamente del estado principal */}
-                  {luminaireData.photometrics && (
-                    <div className="mt-6 border-t pt-6">
-                      <h3 className="text-sm font-semibold text-gray-800 mb-3">Exportar Datos Estimados</h3>
-                      <div className="space-y-2">
-                        <DownloadIesButton reportData={luminaireData.reportData} photometricData={luminaireData.photometrics} />
-                        <DownloadLdtButton reportData={luminaireData.reportData} photometricData={luminaireData.photometrics} />
-                      </div>
-                    </div>
-                  )}
-                </>
+        <div className="flex flex-col lg:flex-row lg:space-x-8">
+          
+          {/* --- PANEL IZQUIERDO (Sin cambios) --- */}
+          <div className="lg:w-1/2 space-y-6">
+            <PhotometricEstimatorForm
+              formData={formData}
+              onFormChange={handleFormChange}
+              onReset={handleReset}
+              reportData={reportData}
+            />
+          </div>
+
+          {/* --- PANEL DERECHO (Estructura final y limpia) --- */}
+          <div className="lg:w-1/2 space-y-6 mt-8 lg:mt-0">
+            <div className="sticky top-8">
+              
+              {/* --- CONTENEDOR DE LA VISTA EN VIVO --- */}
+              <div className={`space-y-6 transition-opacity duration-300 ${currentResult ? 'opacity-100' : 'opacity-0'}`}>
+                <div className="flex justify-center gap-4 mb-4">
+                  <button onClick={() => setActiveChart('polar')} className={`px-4 py-2 rounded-lg ${activeChart === 'polar' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700'}`}>Polar Diagram</button>
+                  <button onClick={() => setActiveChart('isolux')} className={`px-4 py-2 rounded-lg ${activeChart === 'isolux' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700'}`}>Isolux Diagram</button>
+                </div>
+                
+                {/* --- ESTE ES EL ÚNICO LUGAR DONDE SE MUESTRAN LOS DIAGRAMAS --- */}
+                <div className="pt-10">
+                  {photometrics && activeChart === 'polar' && <PolarDiagram data={photometrics} title={reportData?.productName ?? 'Luminaire'} />}
+                  {photometrics && activeChart === 'isolux' && <IsoluxDiagram photometricData={photometrics} />}
+
+                </div>
+              </div>
+
+              {/* --- BOTÓN DE DESCARGA (siempre visible) --- */}
+              <div className="pt-6 text-center">
+                <GeneratePdfButton
+                  reportData={reportData}
+                  disabled={!reportData}
+                  onStartRender={() => {
+  const ids = { polarId: 'polar-for-pdf', isoluxId: 'isolux-for-pdf' };
+  setPdfRenderIds({ polar: ids.polarId, isolux: ids.isoluxId });
+  return ids;
+}}
+                  onEndRender={() => setPdfRenderIds(null)}
+                />
+              </div>
+
+              {/* --- DIV OCULTO PARA EL PDF (corregido y limpio) --- */}
+             {/* ----- DIV OCULTO (AHORA CON TAMAÑO FIJO) ----- */}
+              {pdfRenderIds && photometrics && (
+                <div
+                  style={{
+                    position: 'absolute',
+                    left: '-9999px', // Lo manda fuera de la pantalla
+                    top: 0,
+                    zIndex: -1,
+                    backgroundColor: 'white',
+                    // --- LA LÍNEA CLAVE ---
+                    // Le damos un ancho fijo y realista para que los gráficos se dibujen bien
+                    width: '600px', 
+                  }}
+                >
+                  {/* El padding da "aire" a la captura */}
+                  <div id={pdfRenderIds.polar} style={{ padding: '20px' }}>
+                    <PolarDiagram data={photometrics} title="" />
+                  </div>
+                  <div id={pdfRenderIds.isolux} style={{ padding: '20px', marginTop: '2rem' }}>
+                    <IsoluxDiagram photometricData={photometrics} isPdfMode={true} />
+                  </div>
+                </div>
               )}
-              {activeTab === 'upload' && <PhotometricUploader onDataParsed={handleDataParsed} />}
             </div>
-          </div>
-
-          <div className="p-4 border rounded-lg shadow-md bg-white space-y-4">
-            <h2 className="text-xl font-bold text-gray-700">Resultados y Datos del Informe</h2>
-            <LuminaireDataForm data={luminaireData.reportData} onDataChange={handleReportDataChange} isReadOnly={isDataFromFile} />
           </div>
         </div>
-
-        <div className="flex flex-col space-y-6">
-          <h2 className="text-xl font-bold text-gray-700 text-center">Visualización y Descarga</h2>
-          <div id={DIAGRAM_ID} className="border rounded-lg shadow-lg bg-white">
-            <div className="flex border-b">
-              <button onClick={() => setActiveChart('polar')} className={`flex-1 text-center px-4 py-3 font-semibold transition-colors duration-200 ${activeChart === 'polar' ? 'border-b-2 border-green-500 text-green-600 bg-green-50' : 'text-gray-500 hover:text-green-500'}`}>
-                Diagrama Polar
-              </button>
-              <button onClick={() => setActiveChart('isolux')} className={`flex-1 text-center px-4 py-3 font-semibold transition-colors duration-200 ${activeChart === 'isolux' ? 'border-b-2 border-green-500 text-green-600 bg-green-50' : 'text-gray-500 hover:text-green-500'}`}>
-                Diagrama Isolux
-              </button>
-            </div>
-            <div className="p-2 sm:p-4 h-[600px]">
-              {/* <<<< CAMBIO 4: Pasamos el título al PolarDiagram >>>> */}
-              {activeChart === 'polar' && <PolarDiagram data={luminaireData.photometrics} title={luminaireData.reportData?.productName} />}
-              {activeChart === 'isolux' && <IsoluxDiagram photometricData={luminaireData.photometrics} />}
-            </div>
-          </div>
-          <GeneratePdfButton reportData={luminaireData.reportData} diagramId={DIAGRAM_ID} />
-        </div>
-      </main>
-
-      <footer className="text-center py-6 mt-8">
-        <p className="text-sm text-gray-500">LNS Hong Kong (sistemas digitales)®</p>
-      </footer>
+      </div>
     </div>
   );
 }
 
 export default App;
+// ===================================================================
+// TERMINA EL BLOQUE DE REEMPLAZO
+// ===================================================================

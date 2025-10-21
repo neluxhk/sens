@@ -1,87 +1,56 @@
 // src/components/LuminaireDataForm.tsx
-
 import React from 'react';
 import { LuminaireReportData } from '../types/data';
 
 interface LuminaireDataFormProps {
-  data: LuminaireReportData | null;
-  onDataChange: (newData: LuminaireReportData) => void;
-  isReadOnly?: boolean;
+  reportData?: LuminaireReportData | null;
+  onChange: (newData: LuminaireReportData) => void;
 }
 
-export const LuminaireDataForm: React.FC<LuminaireDataFormProps> = ({ data, onDataChange, isReadOnly }) => {
-  
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    onDataChange({
-      ...data,
-      [name]: value,
-    });
-  };
+interface InputFieldProps {
+  label: string;
+  value: string | number;
+  onChange: (value: string | number) => void;
+  type?: 'text' | 'number';
+}
 
-  // Pequeña mejora: Usamos un helper para simplificar el renderizado
-  const InputField = ({ name, label, placeholder = '', isKeyData = false }: { name: keyof LuminaireReportData, label: string, placeholder?: string, isKeyData?: boolean }) => {
-    const isDisabled = isReadOnly && isKeyData;
-    const nameStr = name as string;
+const InputField: React.FC<InputFieldProps> = ({ label, value, onChange, type = 'text' }) => {
+  return (
+    <div className="flex flex-col mb-2">
+      <label className="text-gray-700 text-sm font-medium">{label}</label>
+      <input
+        type={type}
+        value={value ?? ''}
+        onChange={(e) =>
+          onChange(type === 'number' ? Number(e.target.value) : e.target.value)
+        }
+        className="mt-1 p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+      />
+    </div>
+  );
+};
 
-    return (
-      <div>
-        <label htmlFor={nameStr} className="block text-sm font-medium text-gray-600 mb-1">{label}</label>
-        <input
-          type="text"
-          id={nameStr}
-          name={nameStr}
-          value={data?.[name] || ''}
-          onChange={handleChange}
-          placeholder={placeholder}
-          disabled={isDisabled}
-          className={`mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-200 focus:ring-opacity-50 text-sm ${isDisabled ? 'bg-gray-100 cursor-not-allowed' : 'bg-white'}`}
-        />
-      </div>
-    );
-  };
-  
-  // Render nulo si no hay datos para evitar errores
-  if (!data) {
-    return (
-        <div className="text-center text-gray-500 p-4">
-            Genera o carga datos para ver el informe.
-        </div>
-    );
-  }
+export const LuminaireDataForm: React.FC<LuminaireDataFormProps> = ({ reportData, onChange }) => {
+  if (!reportData) return null; // Protección adicional
 
   return (
-    <div className="space-y-6">
-      <fieldset className="border p-4 rounded-lg space-y-3 shadow-sm">
-        <legend className="text-md font-semibold px-2 text-gray-700">Información General</legend>
-        
-        {/* <<<< NOMBRES DE PROPIEDAD CORREGIDOS >>>> */}
-        <InputField name="productName" label="NAME:" placeholder="Ej: Downlight LED 20W" isKeyData={true} />
-        <InputField name="luminaireType" label="TYPE:" placeholder="Ej: Empotrable" isKeyData={true} />
-        <InputField name="manufacturer" label="MFR. (Fabricante):" placeholder="Ej: LNS Lighting" isKeyData={false} />
-        <InputField name="dimensions" label="DIM.:" placeholder="Ej: Ø150 x 80mm" isKeyData={false} />
+    <fieldset className="border border-gray-300 rounded-lg p-4 space-y-2">
+      <legend className="text-gray-800 font-semibold">Luminaire Data</legend>
 
-      </fieldset>
-      
-      <fieldset className="border p-4 rounded-lg space-y-3 shadow-sm">
-        <legend className="text-md font-semibold px-2 text-gray-700">Datos Fotométricos y Eléctricos</legend>
-        
-        {/* <<<< NOMBRES DE PROPIEDAD CORREGIDOS >>>> */}
-        <InputField name="calculatedImax" label="Imax (cd):" placeholder="Valor calculado" isKeyData={true} />
-        <InputField name="luminousFlux" label="Flujo Nominal (lm):" placeholder="Ej: 1600" isKeyData={true} />
-        <InputField name="power" label="Potencia Nominal (W):" placeholder="Ej: 15" isKeyData={true} />
-        <InputField name="calculatedEfficiency" label="Eficiencia (lm/W):" placeholder="Valor calculado" isKeyData={true} />
-        <InputField name="ratedVoltage" label="Voltaje Nominal (V):" placeholder="Ej: 220-240V" isKeyData={false} />
-      </fieldset>
-
-      <fieldset className="border p-4 rounded-lg space-y-3 shadow-sm">
-        <legend className="text-md font-semibold px-2 text-gray-700">Datos Adicionales</legend>
-        
-        {/* <<<< NOMBRES DE PROPIEDAD CORREGIDOS >>>> */}
-        <InputField name="cct" label="CCT (K):" placeholder="Ej: 4000" isKeyData={true} />
-        <InputField name="cri" label="CRI (Ra):" placeholder="Ej: 90" isKeyData={true} />
-        <InputField name="model" label="MODEL (Chip LED):" placeholder="Ej: SMD2835" isKeyData={false} />
-      </fieldset>
-    </div>
+      <InputField label="Product Name" value={reportData.productName ?? ''} onChange={(val) => onChange({ ...reportData, productName: val as string })} />
+      <InputField label="Luminaire Type" value={reportData.luminaireType ?? ''} onChange={(val) => onChange({ ...reportData, luminaireType: val as string })} />
+      <InputField label="Dimensions" value={reportData.dimensions ?? ''} onChange={(val) => onChange({ ...reportData, dimensions: val as string })} />
+      <InputField label="Power (W)" type="number" value={reportData.power ?? 0} onChange={(val) => onChange({ ...reportData, power: val as number })} />
+      <InputField label="Luminous Flux (lm)" type="number" value={reportData.luminousFlux ?? 0} onChange={(val) => onChange({ ...reportData, luminousFlux: val as number })} />
+      <InputField label="Calculated Efficiency" value={reportData.calculatedEfficiency ?? 'N/A'} onChange={(val) => onChange({ ...reportData, calculatedEfficiency: val as string })} />
+      <InputField label="Rated Voltage" value={reportData.ratedVoltage ?? ''} onChange={(val) => onChange({ ...reportData, ratedVoltage: val as string })} />
+      <InputField label="CCT (K)" type="number" value={reportData.cct ?? 0} onChange={(val) => onChange({ ...reportData, cct: val as number })} />
+      <InputField label="CRI" type="number" value={reportData.cri ?? 0} onChange={(val) => onChange({ ...reportData, cri: val as number })} />
+      <InputField label="Model" value={reportData.model ?? ''} onChange={(val) => onChange({ ...reportData, model: val as string })} />
+      <InputField label="Spec" value={reportData.spec ?? ''} onChange={(val) => onChange({ ...reportData, spec: val as string })} />
+      <InputField label="Emission Shape" value={reportData.emissionShape ?? ''} onChange={(val) => onChange({ ...reportData, emissionShape: val as 'Symmetric' | 'Asymmetric'})} />
+      <InputField label="Symmetry" value={reportData.symmetry ?? ''} onChange={(val) => onChange({ ...reportData, symmetry: val as 'symmetrical' | 'asymmetrical'})} />
+      <InputField label="Optics Type" value={reportData.opticsType ?? ''} onChange={(val) => onChange({ ...reportData, opticsType: val as string })} />
+    </fieldset>
   );
 };
