@@ -8,7 +8,7 @@ import { luminairePresets, luminaireTypeOptions, LOCALSTORAGE_KEY } from '../con
 
 const initialState: LuminaireFormData = {
   productName: 'Office Downlight 60°',
-  luminaireType: 'Downlight',
+  luminaireType: 'Downlight-Track Spotlight',
   dimensions: 'Ø150 x 80mm',
   power: 15,
   luminousFlux: 1600,
@@ -399,7 +399,8 @@ const PhotometricEstimatorForm: React.FC<PhotometricEstimatorFormProps> = ({ for
         className="mt-1 block w-full rounded-md border px-3 py-2 border-gray-200 bg-white"
       >
         <option value="Opal Diffuser">Opal Diffuser</option>
-        <option value="Difusor Opal">Difusor Opal</option>
+        <option value="Reflector">Reflector</option>
+        <option value="Prismatic Lens">Prismatic Lens</option>
         <option value="TIR Lens">TIR Lens</option>
       </select>
     </div>

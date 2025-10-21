@@ -5,8 +5,8 @@ import { LuminaireFormData } from '../types/data';
 export const LOCALSTORAGE_KEY = 'sens_photometric_form_v2';
 
 export const luminaireTypeOptions = [
-  { value: 'Downlight', label: 'Downlight' },
-  { value: 'Projector', label: 'Projector' },
+  { value: 'Downlight-TrackSpotlight', label: 'Downlight / Track Spotlight' },
+  { value: 'Industrial Projector', label: 'Industrial Projector' },
   { value: 'LinearProfile', label: 'Linear / Profile' },
   { value: 'IndustrialHighbay', label: 'Industrial Highbay' },
 ];
