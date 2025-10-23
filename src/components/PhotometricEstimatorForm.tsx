@@ -1,6 +1,11 @@
+// ========================================================================
+// ARCHIVO PhotometricEstimatorForm.tsx - VERSIÓN FINAL Y COMPLETA
+// ========================================================================
+
 import React, { useEffect, useMemo, useState, useCallback } from 'react';
 import { BeamAngleVisualizer } from './BeamAngleVisualizer';
 import { LuminaireFormData, PhotometricData, LuminaireReportData } from '../types/data';
+import { useTranslation } from 'react-i18next';
 
 import FormField from './FormField';
 import { generateEstimatedPhotometricData } from '../utils/photometricEstimator';
@@ -67,16 +72,20 @@ interface PhotometricEstimatorFormProps {
   formData: LuminaireFormData;
   onFormChange: (newFormData: LuminaireFormData) => void;
   onReset: () => void;
-
   reportData: LuminaireReportData | null; 
+  onGenerate: () => void;
+  isGenerateDisabled: boolean;
 }
 
 const PhotometricEstimatorForm: React.FC<PhotometricEstimatorFormProps> = ({ 
   formData, 
   onFormChange, 
   onReset, 
-  reportData 
+  reportData,
+  onGenerate,
+  isGenerateDisabled 
 }) => {
+  const { t } = useTranslation(); 
   // Estados puramente internos que solo afectan a este componente
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [dirty, setDirty] = useState(false);
@@ -159,7 +168,7 @@ const PhotometricEstimatorForm: React.FC<PhotometricEstimatorFormProps> = ({
 
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold">Luminaire Data</h3>
+        <h3 className="text-lg font-semibold">{t('form.title')}</h3>
         <div className="text-sm text-gray-500">
           {savedAt ? `Saved at ${new Date(savedAt).toLocaleTimeString()}` : ''}
         </div>
@@ -167,10 +176,10 @@ const PhotometricEstimatorForm: React.FC<PhotometricEstimatorFormProps> = ({
 
       {/* --- Identification Section --- */}
       <fieldset className="rounded-lg border p-4 shadow-sm">
-        <legend className="px-2 text-md font-semibold text-gray-800">Identification</legend>
+        <legend className="px-2 text-md font-semibold text-gray-800">{t('form.sections.identification')}</legend>
         <div className="grid grid-cols-1 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Luminaire Type</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">{t('form.labels.luminaireType')}</label>
             <select
               value={formData.luminaireType}
               onChange={(e) => applyPreset(e.target.value)}
@@ -184,7 +193,7 @@ const PhotometricEstimatorForm: React.FC<PhotometricEstimatorFormProps> = ({
 
           <FormField
             id="productName"
-            label="Product Name"
+            label={t('form.labels.productName')}
             value={formData.productName}
             onChange={(value) => handleStringChange('productName', value as string)}
             error={errors.productName}
@@ -192,7 +201,7 @@ const PhotometricEstimatorForm: React.FC<PhotometricEstimatorFormProps> = ({
           />
 
           <div>
-            <label htmlFor="spec" className="block text-sm font-medium text-gray-700">Specification (SPEC)</label>
+            <label htmlFor="spec" className="block text-sm font-medium text-gray-700">{t('form.labels.spec')}</label>
             <input
               id="spec"
               value={formData.spec || ''}
@@ -203,7 +212,7 @@ const PhotometricEstimatorForm: React.FC<PhotometricEstimatorFormProps> = ({
           </div>
 
           <div>
-            <label htmlFor="dimensions" className="block text-sm font-medium text-gray-700">Dimensions (mm)</label>
+            <label htmlFor="dimensions" className="block text-sm font-medium text-gray-700">{t('form.labels.dimensions')}</label>
             <input
               id="dimensions"
               value={formData.dimensions || ''}
@@ -214,19 +223,19 @@ const PhotometricEstimatorForm: React.FC<PhotometricEstimatorFormProps> = ({
           </div>
 
           <div className="text-xs text-gray-500 border-t pt-2 mt-2">
-            <p>Preset applied: <span className="font-medium">{presetSummary}</span></p>
-            <p className="mt-1">You can modify any value below.</p>
+            <p>{t('form.texts.presetApplied', { summary: presetSummary })}</p>
+            <p className="mt-1">{t('form.texts.canModify')}</p>
           </div>
         </div>
       </fieldset>
 
       {/* --- Advanced Options --- */}
       <fieldset className="rounded-lg border p-4 shadow-sm">
-        <legend className="px-2 text-md font-semibold text-gray-800">Advanced Options</legend>
+        <legend className="px-2 text-md font-semibold text-gray-800">{t('form.sections.advanced')}</legend>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 
           <NumericSliderField
-            label="CCT (K)"
+            label={t('form.labels.cct')}
             name="cct"
             value={formData.cct}
             min={2000}
@@ -237,7 +246,7 @@ const PhotometricEstimatorForm: React.FC<PhotometricEstimatorFormProps> = ({
           />
 
           <NumericSliderField
-            label="CRI"
+            label={t('form.labels.cri')}
             name="cri"
             value={formData.cri}
             min={60}
@@ -249,7 +258,7 @@ const PhotometricEstimatorForm: React.FC<PhotometricEstimatorFormProps> = ({
 
           <div>
             <label htmlFor="lampsInside" className="block text-sm font-medium text-gray-700">
-              Lamps Inside
+              {t('form.labels.lampsInside')}
             </label>
             <input
               id="lampsInside"
@@ -264,7 +273,7 @@ const PhotometricEstimatorForm: React.FC<PhotometricEstimatorFormProps> = ({
 
           <div>
             <label htmlFor="specNotes" className="block text-sm font-medium text-gray-700">
-              Additional Notes
+              {t('form.labels.additionalNotes')}
             </label>
             <textarea
               id="specNotes"
@@ -272,12 +281,12 @@ const PhotometricEstimatorForm: React.FC<PhotometricEstimatorFormProps> = ({
               onChange={(ev) => handleStringChange('notes', ev.target.value)}
               className="mt-1 block w-full rounded-md border px-3 py-2 border-gray-200"
               rows={3}
-              placeholder="Any other relevant specs or comments"
+              placeholder={t('form.placeholders.notes')}
             />
           </div>
           <div>
             <label htmlFor="ratedVoltage" className="block text-sm font-medium text-gray-700">
-              Rated Voltage
+              {t('form.labels.ratedVoltage')}
             </label>
             <input
               id="ratedVoltage"
@@ -285,7 +294,7 @@ const PhotometricEstimatorForm: React.FC<PhotometricEstimatorFormProps> = ({
               value={formData.ratedVoltage || ''}
               onChange={(ev) => handleStringChange('ratedVoltage', ev.target.value)}
               className="mt-1 block w-full rounded-md border px-3 py-2 border-gray-200"
-              placeholder="e.g. 220-240V"
+              placeholder={t('form.placeholders.voltage')}
             />
           </div>
 
@@ -294,12 +303,11 @@ const PhotometricEstimatorForm: React.FC<PhotometricEstimatorFormProps> = ({
 
       {/* --- Technical Section --- */}
       <fieldset className="rounded-lg border p-4 shadow-sm">
-        <legend className="px-2 text-md font-semibold text-gray-800">Technical Parameters</legend>
+        <legend className="px-2 text-md font-semibold text-gray-800">{t('form.sections.technical')}</legend>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 
-          {/* Power */}
           <NumericSliderField
-            label="Power (W)"
+            label={t('form.labels.power')}
             name="power"
             value={formData.power}
             min={1}
@@ -308,9 +316,8 @@ const PhotometricEstimatorForm: React.FC<PhotometricEstimatorFormProps> = ({
             onChange={handleNumericChange}
           />
 
-          {/* Luminous Flux */}
           <NumericSliderField
-            label="Luminous Flux (lm)"
+            label={t('form.labels.luminousFlux')}
             name="luminousFlux"
             value={formData.luminousFlux}
             min={0}
@@ -320,9 +327,8 @@ const PhotometricEstimatorForm: React.FC<PhotometricEstimatorFormProps> = ({
             onChange={handleNumericChange}
           />
 
-          {/* ----- CAMPO DE IMAX CORREGIDO ----- */}
           <div>
-            <label className="block text-sm font-medium text-gray-700">Calculated Imax (cd)</label>
+            <label className="block text-sm font-medium text-gray-700">{t('form.labels.calculatedImax')}</label>
             <input
               type="number"
               value={Math.round(reportData?.Imax ?? 0)}
@@ -331,9 +337,8 @@ const PhotometricEstimatorForm: React.FC<PhotometricEstimatorFormProps> = ({
             />
           </div>
           
-          {/* ----- CAMPO DE EFICIENCIA AÑADIDO ----- */}
           <div>
-            <label className="block text-sm font-medium text-gray-700">Calculated Efficiency</label>
+            <label className="block text-sm font-medium text-gray-700">{t('form.labels.calculatedEfficiency')}</label>
             <input
               type="text"
               value={reportData?.calculatedEfficiency ?? 'N/A'}
@@ -342,10 +347,9 @@ const PhotometricEstimatorForm: React.FC<PhotometricEstimatorFormProps> = ({
             />
           </div>
 
-          {/* Beam Angle */}
           <div className="md:col-span-2">
             <label className="block text-sm font-medium text-gray-700">
-              Beam Angle (°): <span className="font-medium">{formData.beamAngle ?? 60}°</span>
+              {t('form.labels.beamAngle')} <span className="font-medium">{formData.beamAngle ?? 60}°</span>
             </label>
             <div className="flex items-center gap-3 mt-2">
               <input
@@ -368,10 +372,9 @@ const PhotometricEstimatorForm: React.FC<PhotometricEstimatorFormProps> = ({
             </div>
           </div>
 
-          {/* Optics Type */}
           <div>
             <label htmlFor="opticsType" className="block text-sm font-medium text-gray-700">
-              Optics Type
+              {t('form.labels.opticsType')}
             </label>
             <select
               id="opticsType"
@@ -386,10 +389,9 @@ const PhotometricEstimatorForm: React.FC<PhotometricEstimatorFormProps> = ({
             </select>
           </div>
 
-          {/* Emission Shape */}
           <div>
             <label htmlFor="emissionShape" className="block text-sm font-medium text-gray-700">
-              Emission Shape
+              {t('form.labels.emissionShape')}
             </label>
             <select
               id="emissionShape"
@@ -406,11 +408,31 @@ const PhotometricEstimatorForm: React.FC<PhotometricEstimatorFormProps> = ({
       </fieldset>
 
       {/* --- Buttons --- */}
-      <div className="flex gap-4">
-        <button type="button" onClick={handleResetClick} className="px-4 py-2 bg-gray-200 text-gray-800 rounded-md shadow-sm hover:bg-gray-300">Reset</button>
-      </div>
+      // ========================================================================
+// BLOQUE DE BOTONES CORREGIDO (en PhotometricEstimatorForm.tsx)
+// ========================================================================
+      {/* --- Buttons --- */}
+      <div className="flex items-center justify-between mt-8 pt-6 border-t">
+        <button
+          type="button"
+          onClick={onGenerate}
+          disabled={isGenerateDisabled}
+          // CLASES CORREGIDAS PARA MEJOR VISIBILIDAD
+          className="px-6 py-2 font-semibold rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75 transition-colors duration-200 ease-in-out bg-blue-600 text-white hover:bg-blue-700 disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed"
+        >
+          {t('generateButton')}
+        </button>
 
-      {showToast && <div className="mt-2 text-green-600 text-sm">Form reset successfully!</div>}
+        <button
+          type="button"
+          onClick={handleResetClick}
+          className="text-sm font-medium text-gray-600 hover:text-gray-800"
+        >
+          {t('resetButton')}
+        </button>
+      </div>
+      
+      {showToast && <div className="mt-2 text-green-600 text-sm">{t('messages.formResetSuccess', 'Form reset successfully!')}</div>}
 
     </form>
   );

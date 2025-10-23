@@ -1,6 +1,7 @@
 // src/components/DataViewer.tsx
 
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { PolarDiagram } from './PolarDiagram';
 import { IsoluxDiagram } from './IsoluxDiagram';
 import { GeneratePdfButton } from './GeneratePdfButton';
@@ -9,10 +10,12 @@ import { LuminaireReportData, PhotometricData } from '../types/data';
 interface DataViewerProps {
   reportData: LuminaireReportData;
   photometrics: PhotometricData;
-  onReset: () => void; // Función para volver a la vista de importación
+  onReset: () => void;
 }
 
 export const DataViewer: React.FC<DataViewerProps> = ({ reportData, photometrics, onReset }) => {
+  const { t } = useTranslation();
+  
   const [activeChart, setActiveChart] = useState<'polar' | 'isolux'>('polar');
   const [pdfRenderIds, setPdfRenderIds] = useState<{ polar: string; isolux: string } | null>(null);
 
@@ -20,35 +23,38 @@ export const DataViewer: React.FC<DataViewerProps> = ({ reportData, photometrics
     <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
       <div className="flex justify-between items-center border-b pb-4 mb-4">
         <div>
-          <h2 className="text-xl font-semibold text-gray-800">Análisis de Archivo Importado</h2>
-          <p className="text-sm text-gray-600">{reportData.productName || 'Datos fotométricos'}</p>
+          {/* CORREGIDO: Usando la clave correcta del JSON */}
+          <h2 className="text-xl font-semibold text-gray-800">{t('importer.viewerTitle')}</h2>
+          {/* CORREGIDO: Fallback traducido */}
+          <p className="text-sm text-gray-600">{reportData.productName || t('importer.photometricDataFallback')}</p>
         </div>
         <button 
           onClick={onReset}
           className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-md transition duration-150"
         >
-          Importar otro archivo
+          {/* CORREGIDO: Botón traducido */}
+          {t('importer.importAnotherButton')}
         </button>
       </div>
 
-      {/* Controles de Diagrama */}
       <div className="flex justify-center gap-4 mb-4">
+        {/* CORREGIDO: Botón traducido */}
         <button onClick={() => setActiveChart('polar')} className={`px-4 py-2 rounded-lg ${activeChart === 'polar' ? 'bg-blue-600 text-white' : 'bg-gray-200'}`}>
-          Diagrama Polar
+          {t('diagrams.polarButton')}
         </button>
+        {/* CORREGIDO: Botón traducido */}
         <button onClick={() => setActiveChart('isolux')} className={`px-4 py-2 rounded-lg ${activeChart === 'isolux' ? 'bg-blue-600 text-white' : 'bg-gray-200'}`}>
-          Diagrama Isolux
+          {t('diagrams.isoluxButton')}
         </button>
       </div>
 
-      {/* Diagramas */}
       <div className="pt-6">
         {activeChart === 'polar' && <PolarDiagram data={photometrics} title={reportData.productName ?? ''} />}
         {activeChart === 'isolux' && <IsoluxDiagram photometricData={photometrics} />}
       </div>
 
-      {/* Botón de PDF */}
       <div className="pt-8 text-center">
+        {/* Este componente ya lo traducimos por dentro, así que está bien */}
         <GeneratePdfButton
           reportData={reportData}
           disabled={!photometrics}
@@ -61,7 +67,6 @@ export const DataViewer: React.FC<DataViewerProps> = ({ reportData, photometrics
         />
       </div>
 
-      {/* Div oculto para renderizar el PDF */}
       {pdfRenderIds && (
         <div style={{ position: 'absolute', left: '-9999px', width: '600px', backgroundColor: 'white' }}>
           <div id={pdfRenderIds.polar}><PolarDiagram data={photometrics} title="" isPdfMode /></div>
