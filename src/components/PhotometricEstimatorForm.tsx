@@ -408,9 +408,7 @@ const PhotometricEstimatorForm: React.FC<PhotometricEstimatorFormProps> = ({
       </fieldset>
 
       {/* --- Buttons --- */}
-      // ========================================================================
-// BLOQUE DE BOTONES CORREGIDO (en PhotometricEstimatorForm.tsx)
-// ========================================================================
+
       {/* --- Buttons --- */}
       <div className="flex items-center justify-between mt-8 pt-6 border-t">
         <button
