@@ -1,36 +1,36 @@
 // src/i18n.ts
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
-import HttpApi from 'i18next-http-backend';
 import LanguageDetector from 'i18next-browser-languagedetector';
 
+import translationEN from './locales/en/translation.json';
+import translationES from './locales/es/translation.json';
+import translationZH from './locales/zh/translation.json';
+
+const resources = {
+  en: { translation: translationEN },
+  es: { translation: translationES },
+  zh: { translation: translationZH },
+};
+
+// DEBUG - verifica la estructura real
+console.log('📁 ESTRUCTURA de translationES:');
+console.log(translationES); // ← Esto muestra TODO el objeto
+console.log('Keys principales en ES:', Object.keys(translationES));
+console.log('Tipo de translationES:', typeof translationES);
+
 i18n
-  .use(HttpApi)
   .use(LanguageDetector)
   .use(initReactI18next)
   .init({
-    // --- Tus opciones (correctas) ---
+    resources,
     fallbackLng: 'en',
-    supportedLngs: ['en', 'es', 'zh'],
-    backend: {
-      loadPath: '/locales/{{lng}}/translation.json',
-    },
-    detection: {
-      order: ['localStorage', 'cookie', 'navigator'],
-      caches: ['localStorage'],
-    },
-    react: {
-      useSuspense: true,
-    },
-    
-    // --- LÍNEAS AÑADIDAS ---
-    // 1. Activa los logs en la consola (¡esencial para depurar!)
-    debug: true, 
-
-    // 2. Configuración estándar para React
-    interpolation: {
-      escapeValue: false, // React ya se encarga de esto
-    },
+    debug: true,
+    interpolation: { escapeValue: false },
+    detection: { 
+      order: ['localStorage', 'navigator'],
+      caches: ['localStorage']
+    }
   });
 
 export default i18n;

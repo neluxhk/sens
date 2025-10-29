@@ -1,0 +1,606 @@
+{
+  "landing": {
+    "title": "SENS - Análisis Fotométrico Estimado",
+    "description": "Descubre SENS, la plataforma digital de iluminación para tus proyectos de lighting arquitectónico.",
+    "nav": {
+      "hero": "Inicio",
+      "features": "Características",
+      "cta": "Contacto",
+      "app": "Lanzar Aplicación"
+    },
+    "hero": {
+      "title": "Soluciones Profesionales de Iluminación para Tus Proyectos",
+      "subtitle": "SENS ofrece sistemas de iluminación arquitectónica avanzados y personalizados para todo tipo de proyectos y especificaciones.",
+      "cta": "Experimenta SENS"
+    },
+    "features": {
+      "items": [
+        {
+          "title": "Diseño de Iluminación Personalizado",
+          "desc": "Desarrollamos soluciones de iluminación adaptadas a los requisitos específicos de tu proyecto y criterios de diseño."
+        },
+        {
+          "title": "Optimización del Rendimiento Energético",
+          "desc": "Monitoriza el consumo energético y maximiza la eficiencia del sistema de iluminación manteniendo los estándares de rendimiento."
+        },
+        {
+          "title": "Integración Completa del Sistema",
+          "desc": "Interoperabilidad perfecta con sistemas de control de iluminación existentes e infraestructura de gestión de edificios."
+        }
+      ]
+    },
+    "cta": {
+      "title": "Inicia Tu Proyecto con SENS",
+      "subtitle": "Regístrate para explorar cómo SENS puede transformar tu experiencia de iluminación espacial y los resultados del proyecto.",
+      "button": "Lanzar Aplicación"
+    }
+  },
+  "languages": {
+    "en": "Inglés",
+    "es": "Español",
+    "zh": "Chino"
+  },
+  "app": {
+    "mainTitle": "Suite de Análisis Fotométrico SENS por LNS",
+    "estimatorTab": "Estimador Fotométrico",
+    "importerTab": "Importación y Análisis de Datos",
+    "homeTab": "Panel de Control",
+    "fichaTecnicaTab": "Ficha Técnica",
+    "homeContent": "Bienvenido a la Plataforma de Análisis Fotométrico SENS"
+  },
+  "form": {
+    "title": "Especificaciones Técnicas del Luminaire",
+    "resetButton": "Limpiar Formulario",
+    "sections": {
+      "identification": "Identificación del Producto",
+      "advanced": "Configuración Avanzada",
+      "technical": "Parámetros Técnicos"
+    },
+    "labels": {
+      "luminaireType": "Tipo de Luminaire",
+      "productName": "Designación del Producto",
+      "spec": "Especificación Técnica",
+      "dimensions": "Dimensiones (mm)",
+      "cct": "Temperatura de Color Correlacionada (K)",
+      "cri": "Índice de Renderizado de Color",
+      "lampsInside": "Fuentes de Luz Integradas",
+      "additionalNotes": "Notas Técnicas",
+      "ratedVoltage": "Tensión Nominal",
+      "power": "Consumo de Energía (W)",
+      "luminousFlux": "Flujo Luminoso (lm)",
+      "calculatedImax": "Intensidad Máxima Calculada (cd)",
+      "calculatedEfficiency": "Eficacia del Sistema",
+      "beamAngle": "Ángulo de Distribución del Haz (°)",
+      "opticsType": "Tipo de Sistema Óptico",
+      "emissionShape": "Patrón de Distribución de Luz"
+    },
+    "placeholders": {
+      "notes": "Especificaciones técnicas adicionales o notas del proyecto",
+      "voltage": "ej., 220-240V AC"
+    },
+    "texts": {
+      "presetApplied": "Configuración preestablecida aplicada: {{summary}}",
+      "canModify": "Todos los parámetros se pueden modificar a continuación para cumplir con las especificaciones del proyecto."
+    }
+  },
+  "diagrams": {
+    "estimatorTitle": "Diagramas de Análisis Fotométrico",
+    "polarButton": "Curva de Distribución Polar",
+    "isoluxButton": "Diagrama Isolux",
+    "isoluxHeight": "Altura de Montaje (m)",
+    "isoluxLevels": "Niveles de Iluminancia (lx)"
+  },
+  "importer": {
+    "viewTitle": "Importación y Análisis de Datos Fotométricos",
+    "description": "Selecciona archivos de datos fotométricos en formato .ies o .ldt. El sistema procesará los datos y generará los diagramas fotométricos y análisis correspondientes.",
+    "selectFileButton": "Seleccionar Archivo Fotométrico",
+    "viewerTitle": "Análisis de Datos Importados",
+    "importAnotherButton": "Importar Archivo Adicional"
+  },
+  "downloads": {
+    "iesButton": "Descargar Archivo IES",
+    "ldtButton": "Descargar Archivo LDT",
+    "pdfButton": "Descargar Informe Técnico",
+    "generating": "Procesando Datos..."
+  },
+  "messages": {
+    "importSuccess": "Archivo importado y analizado exitosamente.",
+    "importError": "Error procesando el archivo seleccionado.",
+    "invalidFileError": "El archivo no contiene datos fotométricos válidos o información de reporte.",
+    "formResetSuccess": "¡Formulario limpiado y reiniciado exitosamente!"
+  },
+  "generateButton": "Generar Datos Fotométricos",
+  "invalidDataAlert": "Por favor completa todos los campos requeridos con valores técnicos válidos.",
+  "resetButton": "Reiniciar Formulario",
+  "pdf": {
+    "headerTitle": "INFORME DE ANÁLISIS FOTOMÉTRICO SENS",
+    "pageIndicator": "Página 1 de 1",
+    "mainTitle": "INFORME DE PRUEBA FOTOMÉTRICA DE LUMINARIO",
+    "tableModel": "MODELO DE PRODUCTO",
+    "tableImax": "Intensidad Máxima (cd)",
+    "tablePower": "POTENCIA NOMINAL (W)",
+    "tableEfficiency": "EFICACIA DEL SISTEMA",
+    "tableVoltage": "TENSIÓN DE OPERACIÓN (V)",
+    "tableFlux": "FLUJO LUMINOSO TOTAL (lm)",
+    "tableLamps": "FUENTES INTEGRADAS",
+    "tableCIEClass": "CLASIFICACIÓN CIE",
+    "cieClassValue": "DISTRIBUCIÓN DIRECTA",
+    "polarDiagramTitle": "CURVA DE DISTRIBUCIÓN DE INTENSIDAD LUMINOSA",
+    "isoluxDiagramTitle": "DIAGRAMA ISOLUX PLANO C0",
+    "footerDisclaimer": "Reporte simulado basado en datos de rendimiento fotométrico estimado.",
+    "footerCredit": "Generado por Herramienta de Análisis SENS, desarrollado por LNS HK Digital Systems.",
+    "technicalSheetTitle": "FICHA TÉCNICA",
+    "index": "TABLA DE CONTENIDOS",
+    "page": "Página {{current}} de {{total}}",
+    "pageShort": "Pág. {{page}}",
+    "footer": "SENS - Documentación técnica por LNS HK Digital Systems",
+    "indexHeaderLine1": "Empresa: {{companyName}}",
+    "indexHeaderLine2": "Ficha Técnica",
+    "indexHeaderLine3": "Designación del Producto: {{productName}}",
+    "indexHeaderLine4": "Código de Referencia: {{referenceCode}}"
+  },
+  "importView": {
+    "title": "Importación y Procesamiento de Datos Fotométricos",
+    "description": "Selecciona archivos de datos fotométricos en formato .ies o .ldt para análisis y reportes.",
+    "fileUploadLabel": "Seleccionar Archivo de Datos Fotométricos"
+  },
+  "navbar": {
+    "home": "Panel de Control",
+    "estimator": "Análisis Fotométrico",
+    "technicalSheet": "Documentación Técnica"
+  },
+  "technicalSheet": {
+    "title": "Ficha Técnica Profesional",
+    "subtitle": "Complete especificaciones técnicas integrales del producto",
+    "estimatorDataLoaded": "Datos técnicos cargados desde análisis fotométrico",
+    "footerNote": "Los campos marcados con * requieren completado obligatorio",
+    "resetButton": "Limpiar Todos los Datos",
+    "generateButton": "Generar Ficha Técnica",
+    "previewButton": "Vista Previa del Documento",
+    "ofFields": "de {{total}} parámetros técnicos",
+    
+    "tabs": {
+      "identification": "Identificación del Producto",
+      "optical": "Rendimiento Óptico",
+      "electrical": "Características Eléctricas",
+      "mechanical": "Especificaciones Mecánicas",
+      "led": "Datos de Fuente LED",
+      "control": "Control y Regulación",
+      "certification": "Cumplimiento y Certificación"
+    },
+    
+    "subtitles": {
+      "identification": "Datos de identificación y clasificación del producto",
+      "optical": "Rendimiento fotométrico y características ópticas",
+      "electrical": "Parámetros eléctricos y especificaciones de consumo",
+      "mechanical": "Dimensiones físicas y detalles de construcción",
+      "led": "Especificaciones técnicas de fuente de luz LED",
+      "control": "Protocolos de regulación y compatibilidad de sistemas",
+      "certification": "Cumplimiento regulatorio y estándares de certificación"
+    },
+    
+    "fields": {
+      "productName": "Designación del Producto",
+      "referenceCode": "Código de Referencia del Producto",
+      "commercialName": "Designación Comercial",
+      "productFamily": "Familia/Serie del Producto",
+      "manufacturer": "Empresa",
+      "reportCompany": "Proveedor de Documentación Técnica",
+      "description": "Descripción Técnica",
+      "applications": "Aplicaciones Recomendadas",
+      
+      "luminousFlux": "Flujo Luminoso Total (lm)",
+      "efficacy": "Eficacia Luminosa (lm/W)",
+      "cct": "Temperatura de Color Correlacionada (K)",
+      "cri": "Índice de Renderizado de Color (CRI)",
+      "beamAngle": "Ángulo de Distribución del Haz (°)",
+      "beamType": "Tipo de Distribución del Haz",
+      "opticalSystem": "Configuración del Sistema Óptico",
+      "distributionType": "Distribución Fotométrica",
+      "uniformity": "Relación de Uniformidad de Luz",
+      
+      "totalPower": "Potencia Total del Sistema (W)",
+      "ledPower": "Potencia del Módulo LED (W)",
+      "inputVoltage": "Rango de Tensión de Entrada",
+      "frequency": "Frecuencia de Operación (Hz)",
+      "current": "Corriente de Operación (A)",
+      "powerFactor": "Factor de Potencia",
+      "driverType": "Tipo de Driver LED",
+      "driverEfficiency": "Eficiencia del Driver (%)",
+      "driverLifetime": "Vida Útil del Driver (h)",
+      "connectionType": "Conexión Eléctrica",
+      "protectionClass": "Clase de Protección Eléctrica",
+      
+      "dimensions": "Dimensiones Físicas (mm)",
+      "weight": "Peso del Producto (kg)",
+      "materials": "Materiales de Construcción",
+      "finish": "Acabado Superficial",
+      "color": "Color del Producto",
+      "ip": "Clasificación de Protección IP",
+      "ik": "Clasificación de Impacto IK",
+      "operatingTemperature": "Rango de Temperatura de Operación",
+      "coolingSystem": "Sistema de Gestión Térmica",
+      
+      "ledType": "Tecnología LED",
+      "ledBrand": "Fabricante del LED",
+      "ledLifetime": "Vida Útil del LED (h)",
+      "colorConsistency": "Consistencia de Color (SDCM)",
+      "sdcm": "Tolerancia de Color (SDCM)",
+      
+      "dimmable": "Capacidad de Regulación",
+      "dimmingType": "Método de Regulación",
+      "protocol": "Protocolo de Control",
+      "tunableWhite": "Espectro Blanco Ajustable",
+      "rgb": "Capacidad RGB/RGBW",
+      "colorTuningRange": "Rango de Ajuste de Color",
+      "controlInterfaces": "Interfaces de Control",
+      "compatibleSystems": "Sistemas de Control Compatibles",
+      
+      "ceMarking": "Marcado de Conformidad CE",
+      "standards": "Estándares Aplicables",
+      "otherCertifications": "Certificaciones Adicionales",
+      "safetyClass": "Clasificación de Seguridad",
+      "warrantyYears": "Período de Garantía (Años)",
+      "warrantyConditions": "Términos y Condiciones de Garantía"
+    },
+    
+    "placeholders": {
+      "select": "Seleccionar opción...",
+      "productName": "ej., Downlight Empotrado Oficina 60°",
+      "referenceCode": "ej., DL-OFFICE-60D",
+      "reportCompany": "ej., SENS, LNS HK Digital Systems",
+      "commercialName": "ej., Serie Premium de Luminarios para Oficina",
+      "productFamily": "ej., Downlights Empotrados",
+      "manufacturer": "ej., SENS Lighting Solutions",
+      "description": "Descripción técnica detallada del producto y características...",
+      "applications": "Espacios de oficina, entornos comerciales, áreas públicas...",
+      "luminousFlux": "ej., 1600",
+      "efficacy": "ej., 85.0",
+      "uniformity": "ej., 0.7",
+      "totalPower": "ej., 25.5",
+      "ledPower": "ej., 22.0",
+      "current": "ej., 0.21",
+      "powerFactor": "ej., 0.95",
+      "driverEfficiency": "ej., 90.5",
+      "driverLifetime": "ej., 50,000",
+      "dimensions": "ej., 200×200×80",
+      "weight": "ej., 1.2",
+      "operatingTemperature": "ej., -20°C a +40°C",
+      "ledLifetime": "ej., 50,000",
+      "sdcm": "ej., 3",
+      "colorTuningRange": "ej., 2700K-6500K",
+      "compatibleSystems": "ej., DALI, 0-10V, KNX",
+      "standards": "ej., EN 60598, EN 62471, EN 62031",
+      "certifications": "ej., UL, ETL, DLC, Energy Star",
+      "warrantyConditions": "Términos específicos de garantía, condiciones y limitaciones..."
+    },
+    
+    "options": {
+      "cct": {
+        "2700": "2700K - Blanco Cálido",
+        "3000": "3000K - Blanco Cálido",
+        "3500": "3500K - Blanco Neutro",
+        "4000": "4000K - Blanco Frío",
+        "5000": "5000K - Luz Diurna",
+        "6500": "6500K - Luz Diurna Fría"
+      },
+      "cri": {
+        "70": "70 - Estándar",
+        "80": "80 - Bueno",
+        "90": "90 - Excelente",
+        "95": "95 - Premium"
+      },
+      "beamAngle": {
+        "10": "10° - Muy Estrecho",
+        "24": "24° - Estrecho",
+        "36": "36° - Medio",
+        "60": "60° - Ancho",
+        "90": "90° - Muy Ancho",
+        "120": "120° - Extra Ancho"
+      },
+      "beamType": {
+        "symmetric": "Simétrico",
+        "asymmetric": "Asimétrico",
+        "wallWash": "Lavado de Pared",
+        "spot": "Spot",
+        "flood": "Flood"
+      },
+      "opticalSystem": {
+        "reflector": "Reflector",
+        "tirLens": "Lente TIR",
+        "pcLens": "Lente PC",
+        "opalDiffuser": "Difusor Opal",
+        "prismaticLens": "Lente Prismático"
+      },
+      "distribution": {
+        "type1": "Tipo I - Muy Estrecho",
+        "type2": "Tipo II - Estrecho",
+        "type3": "Tipo III - Medio",
+        "type4": "Tipo IV - Ancho",
+        "type5": "Tipo V - Circular"
+      },
+      "voltage": {
+        "100_120V": "100-120V AC",
+        "200_240V": "200-240V AC",
+        "277V": "277V AC",
+        "100_240V": "100-240V AC",
+        "12V": "12V DC",
+        "24V": "24V DC"
+      },
+      "frequency": {
+        "50Hz": "50 Hz",
+        "60Hz": "60 Hz",
+        "50_60Hz": "50/60 Hz"
+      },
+      "driverType": {
+        "builtIn": "Integrado",
+        "external": "Externo",
+        "constantCurrent": "Corriente Constante",
+        "constantVoltage": "Tensión Constante"
+      },
+      "connectionType": {
+        "terminalBlock": "Bloque de Terminales",
+        "quickConnect": "Conexión Rápida",
+        "screwTerminal": "Terminal de Tornillo",
+        "wireLeads": "Cables de Conexión"
+      },
+      "protectionClass": {
+        "class1": "Clase I",
+        "class2": "Clase II",
+        "class3": "Clase III"
+      },
+      "materials": {
+        "aluminum": "Aluminio",
+        "steel": "Acero",
+        "plastic": "Plástico",
+        "polycarbonate": "Policarbonato",
+        "glass": "Vidrio",
+        "ceramic": "Cerámica"
+      },
+      "finish": {
+        "white": "Blanco",
+        "black": "Negro",
+        "silver": "Plateado",
+        "anodized": "Anodizado",
+        "powderCoated": "Pintura en Polvo",
+        "brushed": "Cepillado"
+      },
+      "color": {
+        "white": "Blanco",
+        "black": "Negro",
+        "silver": "Plateado",
+        "gray": "Gris",
+        "custom": "Personalizado"
+      },
+      "ip": {
+        "ip20": "IP20",
+        "ip44": "IP44",
+        "ip54": "IP54",
+        "ip65": "IP65",
+        "ip66": "IP66",
+        "ip67": "IP67",
+        "ip68": "IP68"
+      },
+      "ik": {
+        "ik06": "IK06",
+        "ik07": "IK07",
+        "ik08": "IK08",
+        "ik09": "IK09",
+        "ik10": "IK10"
+      },
+      "coolingSystem": {
+        "natural": "Convección Natural",
+        "heatSink": "Disipador de Calor",
+        "forcedAir": "Aire Forzado",
+        "liquid": "Refrigeración Líquida"
+      },
+      "ledType": {
+        "smd": "SMD",
+        "cob": "COB",
+        "highPower": "Alta Potencia",
+        "midPower": "Media Potencia",
+        "csp": "CSP",
+        "filament": "Filamento"
+      },
+      "ledBrand": {
+        "cree": "CREE",
+        "lumileds": "Lumileds",
+        "samsung": "Samsung",
+        "seoul": "Seoul Semiconductor",
+        "nichia": "Nichia",
+        "osram": "Osram",
+        "bridgelux": "Bridgelux"
+      },
+      "ledLifetime": {
+        "l70b50_25k": "L70B50 25,000h",
+        "l70b50_35k": "L70B50 35,000h",
+        "l70b50_50k": "L70B50 50,000h",
+        "l80b50_50k": "L80B50 50,000h",
+        "l90b50_50k": "L90B50 50,000h",
+        "l70b50_60k": "L70B50 60,000h",
+        "l70b50_100k": "L70B50 100,000h"
+      },
+      "colorConsistency": {
+        "plusMinus1": "±1 SDCM",
+        "plusMinus2": "±2 SDCM",
+        "plusMinus3": "±3 SDCM",
+        "plusMinus5": "±5 SDCM",
+        "plusMinus7": "±7 SDCM"
+      },
+      "dimmingType": {
+        "phaseControl": "Control de Fase",
+        "0_10V": "0-10V",
+        "1_10V": "1-10V",
+        "pwm": "PWM",
+        "dmx": "DMX"
+      },
+      "protocol": {
+        "dali": "DALI",
+        "dali2": "DALI-2",
+        "dmx512": "DMX512",
+        "knx": "KNX",
+        "zigbee": "Zigbee",
+        "bluetooth": "Bluetooth",
+        "wifi": "Wi-Fi",
+        "0_10V": "0-10V",
+        "1_10V": "1-10V"
+      },
+      "controlInterfaces": {
+        "wired": "Cableado",
+        "wireless": "Inalámbrico",
+        "both": "Ambos"
+      },
+      "safetyClass": {
+        "class1": "Clase I",
+        "class2": "Clase II",
+        "class3": "Clase III"
+      },
+      "warrantyYears": {
+        "1": "1 año",
+        "2": "2 años",
+        "3": "3 años",
+        "5": "5 años",
+        "7": "7 años",
+        "10": "10 años"
+      }
+    },
+    
+    "descriptions": {
+      "productName": "Designación oficial del producto según especificaciones de catálogo",
+      "referenceCode": "Código de identificación de referencia único del producto",
+      "reportCompany": "Empresa responsable de generar esta documentación técnica",
+      "commercialName": "Designación comercial para fines de marketing",
+      "productFamily": "Clasificación de familia o serie del producto",
+      "manufacturer": "Nombre de la entidad legal de la empresa",
+      "description": "Descripción técnica detallada y especificaciones",
+      "applications": "Aplicaciones recomendadas y escenarios de uso",
+      "luminousFlux": "Salida de flujo luminoso total en lúmenes",
+      "efficacy": "Eficacia luminosa en lúmenes por vatio",
+      "cct": "Temperatura de color correlacionada en Kelvin",
+      "cri": "Valor del índice de renderizado de color",
+      "beamAngle": "Ángulo del haz al 50% de la intensidad máxima",
+      "beamType": "Tipo de patrón de distribución del haz de luz",
+      "opticalSystem": "Tipo de sistema óptico empleado",
+      "distributionType": "Clasificación de distribución fotométrica",
+      "uniformity": "Medición de la relación de uniformidad de luz",
+      "totalPower": "Consumo total de energía del sistema en vatios",
+      "ledPower": "Consumo de energía del módulo LED",
+      "inputVoltage": "Especificación del rango de tensión de operación",
+      "frequency": "Requisito de frecuencia eléctrica",
+      "current": "Corriente de operación en amperios",
+      "powerFactor": "Valor del factor de potencia",
+      "driverType": "Tipo de tecnología del driver LED",
+      "driverEfficiency": "Eficiencia de conversión de energía del driver",
+      "driverLifetime": "Vida operacional esperada del driver",
+      "connectionType": "Metodología de conexión eléctrica",
+      "protectionClass": "Clasificación de protección eléctrica",
+      "dimensions": "Dimensiones físicas del producto en milímetros",
+      "weight": "Peso del producto en kilogramos",
+      "materials": "Materiales de construcción primarios",
+      "finish": "Tipo y tratamiento de acabado superficial",
+      "color": "Especificación del color del producto",
+      "ip": "Clasificación de protección contra ingreso",
+      "ik": "Clasificación de protección contra impacto",
+      "operatingTemperature": "Especificación del rango de temperatura de operación",
+      "coolingSystem": "Configuración del sistema de gestión térmica",
+      "ledType": "Clasificación de tecnología LED",
+      "ledBrand": "Marca del fabricante del LED",
+      "ledLifetime": "Vida útil del LED según estándar L70/B50",
+      "colorConsistency": "Consistencia de color en unidades SDCM",
+      "sdcm": "Tolerancia de coincidencia de desviación estándar de color",
+      "dimmable": "Especificación de capacidad de regulación",
+      "dimmingType": "Metodología de regulación empleada",
+      "protocol": "Protocolo de comunicación de control",
+      "tunableWhite": "Capacidad de espectro blanco ajustable",
+      "rgb": "Capacidad de color RGB o RGBW",
+      "colorTuningRange": "Rango de ajuste de temperatura de color",
+      "controlInterfaces": "Opciones de interfaces de control disponibles",
+      "compatibleSystems": "Sistemas de control y protocolos compatibles",
+      "ceMarking": "Estado del marcado de conformidad CE",
+      "standards": "Estándares y regulaciones aplicables",
+      "otherCertifications": "Certificaciones y aprobaciones adicionales",
+      "safetyClass": "Clasificación de seguridad eléctrica",
+      "warrantyYears": "Duración del período de garantía en años",
+      "warrantyConditions": "Términos, condiciones y limitaciones de garantía"
+    },
+    
+    "guide": {
+      "title": "Guía de Prioridad de Campos",
+      "description": "Los campos están categorizados por importancia para la integridad de la especificación del producto",
+      "required": "Obligatorio",
+      "recommended": "Recomendado",
+      "optional": "Opcional"
+    },
+    
+    "fieldPriority": {
+      "required": "Obligatorio",
+      "recommended": "Recomendado",
+      "optional": "Opcional"
+    },
+    
+    "progress": {
+      "sectionProgress": "Progreso de Completado de Sección"
+    },
+    
+    "calculations": {
+      "efficiency": "Eficacia del Sistema",
+      "basedOnFluxPower": "Calculado basado en flujo luminoso y consumo total de energía"
+    },
+    
+    "tips": {
+      "identification": "Identificación del Producto",
+      "identificationDescription": "Datos de identificación central para catalogación, clasificación y referencia técnica del producto.",
+      "optical": "Datos de Rendimiento Óptico",
+      "opticalDescription": "Los parámetros ópticos definen el comportamiento fotométrico, características de distribución de luz y rendimiento visual del producto.",
+      "electrical": "Especificaciones Eléctricas",
+      "electricalDescription": "Características eléctricas incluyendo consumo de energía, métricas de eficiencia y parámetros operacionales para integración del sistema.",
+      "mechanical": "Construcción Mecánica",
+      "mechanicalDescription": "Dimensiones físicas, especificaciones de materiales y detalles de construcción que definen las propiedades físicas y requisitos de instalación del luminario.",
+      "led": "Especificaciones de Fuente LED",
+      "ledDescription": "Características técnicas y especificaciones de rendimiento del módulo LED, componentes y tecnología de fuente de luz.",
+      "control": "Integración de Sistemas de Control",
+      "controlDescription": "Capacidades de regulación, protocolos de control, interfaces de comunicación y características de integración de sistemas de iluminación inteligente.",
+      "certification": "Cumplimiento y Certificación",
+      "certificationDescription": "Certificaciones de cumplimiento regulatorio, adhesión a estándares de seguridad, aprobaciones de calidad e información de garantía para especificación profesional."
+    },
+
+    "pdfPreview": {
+      "title": "Vista Previa - Ficha Técnica",
+      "subtitle": "Revisa las secciones a incluir en la documentación final",
+      "fieldsCompleted": "{{count}} parámetros completados",
+      "included": "INCLUIDO",
+      "emptySections": "Secciones sin datos técnicos:",
+      "sectionsSummary": "{{completed}} de {{total}} secciones contendrán especificaciones técnicas",
+      "reviewMoreButton": "Revisar datos adicionales",
+      "generatingButton": "Procesando...",
+      "generateProfessionalButton": "Generar Documentación Profesional",
+      "professionalInfo": {
+        "title": "Estándares de Documentación Profesional",
+        "description": "El PDF generado se adherirá a los estándares profesionales de documentación técnica IEC/EN para productos de iluminación."
+      }
+    },
+
+    "actions": {
+      "resetForm": "Limpiar Formulario",
+      "previewPDF": "Vista Previa PDF",
+      "downloadPDF": "Descargar PDF",
+      "resetConfirmation": "¿Estás seguro de que quieres limpiar todo el formulario? Se perderán todos los datos.",
+      "resetSuccess": "Formulario limpiado correctamente"
+    },
+    "stats": {
+      "sections": "secciones",
+      "fields": "campos",
+      "completed": "completadas",
+      "filled": "llenados"
+    }
+  },
+  "navigation": {
+    "home": "Panel de Control",
+    "estimator": "Análisis Fotométrico",
+    "technicalSheet": "Documentación Técnica"
+  },
+  "common": {
+    "yes": "Sí",
+    "no": "No"
+  }
+}

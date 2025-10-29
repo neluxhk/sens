@@ -1,13 +1,18 @@
-// ====================== CÓDIGO COMPLETO PARA App.tsx ======================
+// ====================== App.tsx ======================
 import React, { useState, useEffect, useCallback } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import LandingPage from './components/landing/LandingPage';
 import { useTranslation } from 'react-i18next';
-import { LanguageSwitcher } from './components/LanguageSwitcher';
 import PhotometricEstimatorForm from './components/PhotometricEstimatorForm';
 import { PolarDiagram } from './components/PolarDiagram';
 import { IsoluxDiagram } from './components/IsoluxDiagram';
 import { GeneratePdfButton } from './components/GeneratePdfButton';
 import { ImportView } from './components/ImportView';
 import { DataViewer } from './components/DataViewer';
+import  FichaTechnicalForm  from './features/ficha-tecnica/FichaTechnicalForm';
+import { Navbar } from './components/Navbar';
+import { EstimationToTechnicalSheetConnector } from './features/ficha-tecnica/EstimationToTechnicalSheetConnector';
+
 import { generateEstimatedPhotometricData } from './utils/photometricEstimator';
 import { generateIesFileContent, generateLdtFileContent } from './utils/fileGenerators';
 import { parseIes } from './utils/iesParser';
@@ -43,10 +48,10 @@ const defaultForm: LuminaireFormData = {
 const PolarDiagramMemo = React.memo(PolarDiagram);
 const IsoluxDiagramMemo = React.memo(IsoluxDiagram);
 
-// En App.tsx
+// ====================== Componentes Internos ======================
 const ChartSelectorButtons = React.memo(
   ({ activeChart, setActiveChart }: { activeChart: 'polar' | 'isolux'; setActiveChart: (chart: 'polar' | 'isolux') => void }) => {
-    const { t } = useTranslation(); // Usamos el hook de traducción aquí
+    const { t } = useTranslation();
     return (
       <div className="flex justify-center gap-4 mb-4">
         <button
@@ -66,7 +71,6 @@ const ChartSelectorButtons = React.memo(
   }
 );
 
-// ====================== REEMPLÁZALO POR ESTE BLOQUE CORREGIDO ======================
 const DownloadButtons = React.memo(
   ({
     photometrics,
@@ -102,7 +106,6 @@ const DownloadButtons = React.memo(
         <GeneratePdfButton
           reportData={reportData}
           disabled={!photometrics || !reportData}
-          // CAMBIO: Vuelve a la lógica original que tu componente espera
           onStartRender={() => {
             setPdfRenderIds({ polar: 'polar-for-pdf', isolux: 'isolux-for-pdf' });
             return { polarId: 'polar-for-pdf', isoluxId: 'isolux-for-pdf' };
@@ -185,51 +188,78 @@ const EstimatorPanel = React.memo(
   }
 );
 
+// ====================== Función Auxiliar ======================
+const downloadFile = (filename: string, content: string) => {
+  const file = new Blob([content], { type: 'text/plain;charset=utf-8' });
+  const url = URL.createObjectURL(file);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+};
+
+// ====================== App Principal ======================
 export default function App() {
   const { t, i18n, ready } = useTranslation();
+  const location = useLocation();
+  const navigate = useNavigate();
 
+  // ===== Estados principales =====
   const [activeMode, setActiveMode] = useState<'estimator' | 'importer'>('estimator');
   const [formData, setFormData] = useState<LuminaireFormData>(defaultForm);
   const [importedData, setImportedData] = useState<FullLuminaireData | null>(null);
+  const [displayData, setDisplayData] = useState<{ photometrics: PhotometricData | null; reportData: LuminaireReportData | null }>({ photometrics: null, reportData: null });
+  const [lastGeneratedFormData, setLastGeneratedFormData] = useState<LuminaireFormData | null>(null);
   const [activeChart, setActiveChart] = useState<'polar' | 'isolux'>('polar');
   const [pdfRenderIds, setPdfRenderIds] = useState<{ polar: string; isolux: string } | null>(null);
-  
-  const [displayData, setDisplayData] = useState<{
-    photometrics: PhotometricData | null;
-    reportData: LuminaireReportData | null;
-  }>({ photometrics: null, reportData: null });
-  const [lastGeneratedFormData, setLastGeneratedFormData] = useState<LuminaireFormData | null>(null);
+  const [technicalSheetData, setTechnicalSheetData] = useState({
+  productName: '',
+  referenceCode: '', 
+  productFamily: '',
+  description: '',
+  luminousFlux: 0,
+  cct: 0,
+  cri: 0,
+  beamAngle: 0,
+  opticalSystem: '',
+  beamType: '',
+  totalPower: 0,
+  inputVoltage: '',
+  dimensions: '',
+  sections: {
+    identification: {},
+    optical: {},
+    electrical: {},
+    mechanical: {}
+  }
+});
 
-  // En App.tsx
-// ========================================================================
-// VERSIÓN FINAL Y ROBUSTA de handleGenerateCurve (en App.tsx)
-// ========================================================================
-const handleGenerateCurve = useCallback(() => {
-  // 1. Limpiamos los datos antiguos ANTES de generar los nuevos.
-  // Esto fuerza a React a prepararse para un nuevo estado.
-  setDisplayData({ photometrics: null, reportData: null });
+  // ===== Navegación por rutas =====
+  const currentPage = location.pathname.includes('/estimator') 
+    ? 'estimador' 
+    : location.pathname.includes('/technical-sheet') 
+    ? 'fichaTecnica' 
+    : 'home';
 
-  // Usamos un pequeño timeout para darle tiempo a React a procesar el limpiado
-  setTimeout(() => {
-    const result = generateEstimatedPhotometricData(formData);
+  const enterApp = () => navigate('/app/estimator');
 
-    if (result?.photometrics && result?.reportData) {
-      // 2. Si el cálculo es exitoso, establecemos los nuevos datos.
-      setDisplayData({
-        photometrics: result.photometrics,
-        reportData: result.reportData,
-      });
-      // Y recordamos los datos del formulario con los que se generó.
-      setLastGeneratedFormData(formData);
-    } else {
-      // 3. Si falla, mostramos la alerta. Los diagramas ya estarán limpios.
-      alert(t('invalidDataAlert'));
-      // Y nos aseguramos de que el botón se reactive para poder intentarlo de nuevo.
-      setLastGeneratedFormData(null); 
-    }
-  }, 50); // 50ms es suficiente para que el navegador procese el cambio de estado.
-
-}, [formData, t]);
+  // ===== Callbacks =====
+  const handleGenerateCurve = useCallback(() => {
+    setDisplayData({ photometrics: null, reportData: null });
+    setTimeout(() => {
+      const result = generateEstimatedPhotometricData(formData);
+      if (result?.photometrics && result?.reportData) {
+        setDisplayData(result);
+        setLastGeneratedFormData(formData);
+      } else {
+        alert(t('invalidDataAlert'));
+        setLastGeneratedFormData(null);
+      }
+    }, 50);
+  }, [formData, t]);
 
   const handleDownloadIES = useCallback(() => {
     if (displayData.photometrics && displayData.reportData) {
@@ -244,13 +274,12 @@ const handleGenerateCurve = useCallback(() => {
   }, [displayData]);
 
   const handleFormChange = (data: LuminaireFormData) => setFormData(data);
-  // En App.tsx
-const handleResetEstimator = () => {
-  setFormData(defaultForm);
-  setDisplayData({ photometrics: null, reportData: null });
-  setLastGeneratedFormData(null); // <-- AÑADE ESTA LÍNEA
-  localStorage.removeItem(LOCALSTORAGE_KEY);
-};
+  const handleResetEstimator = () => {
+    setFormData(defaultForm);
+    setDisplayData({ photometrics: null, reportData: null });
+    setLastGeneratedFormData(null);
+    localStorage.removeItem(LOCALSTORAGE_KEY);
+  };
 
   const handleFileParse = (content: string, ext: string) => {
     try {
@@ -266,6 +295,21 @@ const handleResetEstimator = () => {
     }
   };
 
+ const handleDataTransferToTechnicalSheet = useCallback((technicalData: any) => {
+  
+  setTechnicalSheetData(prev => ({
+    ...prev,
+    ...technicalData,
+    sections: {
+      ...prev.sections,
+      ...technicalData.sections
+    }
+  }));
+  
+  // Usa la ruta correcta basada en tu estructura
+  navigate('/technical-sheet');
+}, [navigate]);
+
   const handleResetImporter = () => setImportedData(null);
 
   useEffect(() => {
@@ -276,67 +320,103 @@ const handleResetEstimator = () => {
       } catch {}
     }
   }, []);
-  
+
   const showLoadingOverlay = !i18n.isInitialized || !ready;
   const isGenerateDisabled = JSON.stringify(formData) === JSON.stringify(lastGeneratedFormData);
+
+  // ===== Render principal =====
   return (
     <div className="min-h-screen bg-gray-50 relative">
-      <div className="max-w-7xl mx-auto bg-white rounded-2xl shadow-md p-6 lg:p-8 space-y-6">
-       <h1 className="text-2xl font-semibold text-gray-800 text-center">{t('app.mainTitle')}</h1>
-        <LanguageSwitcher />
+      <Navbar />
+      
+      <div className="max-w-7xl mx-auto bg-white rounded-2xl shadow-md p-6 lg:p-8 space-y-6 relative">
+        {/* MOSTRAR LANDING PAGE O APP */}
+        {currentPage === 'home' ? (
+          <LandingPage onEnterApp={enterApp} />
+        ) : (
+          <>
+            <h1 className="text-2xl font-semibold text-gray-800 text-center">{t('app.mainTitle')}</h1>
 
-        <div className="border-b border-gray-200">
-          <nav className="-mb-px flex space-x-8" aria-label="Tabs">
-            <button
-              onClick={() => setActiveMode('estimator')}
-              className={`whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm ${
-                activeMode === 'estimator' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-              }`}
-            >
-              {t('app.estimatorTab')}
-            </button>
-            <button
-              onClick={() => setActiveMode('importer')}
-              className={`whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm ${
-                activeMode === 'importer' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-              }`}
-            >
-              {t('app.importerTab')}
-            </button>
-          </nav>
-        </div>
+            {currentPage === 'estimador' && (
+              <>
+                {/* Tabs internos */}
+                <div className="border-b border-gray-200 mb-4">
+                  <nav className="-mb-px flex space-x-8" aria-label="Estimator tabs">
+                    <button
+                      onClick={() => setActiveMode('estimator')}
+                      className={`whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm ${
+                        activeMode === 'estimator' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                      }`}
+                    >
+                      {t('app.estimatorTab')}
+                    </button>
+                    <button
+                      onClick={() => setActiveMode('importer')}
+                      className={`whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm ${
+                        activeMode === 'importer' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                      }`}
+                    >
+                      {t('app.importerTab')}
+                    </button>
+                  </nav>
+                </div>
 
-        <div className="flex flex-col lg:flex-row lg:space-x-8">
-          <div className="lg:w-1/2 space-y-6">
-            {activeMode === 'estimator' ? (
-              <PhotometricEstimatorForm
-                formData={formData}
-                onFormChange={handleFormChange}
-                onReset={handleResetEstimator}
-                reportData={displayData.reportData}
-                onGenerate={handleGenerateCurve}
-                isGenerateDisabled={isGenerateDisabled}
-              />
-            ) : importedData?.photometrics && importedData?.reportData ? (
-              <DataViewer reportData={importedData.reportData} photometrics={importedData.photometrics} onReset={handleResetImporter} />
-            ) : (
-              <ImportView onFileUpload={handleFileParse} />
+                <div className="flex flex-col lg:flex-row lg:space-x-8">
+                  <div className="lg:w-1/2 space-y-6">
+                    {activeMode === 'estimator' ? (
+  <div className="space-y-6">
+    <PhotometricEstimatorForm
+      formData={formData}
+      onFormChange={handleFormChange}
+      onReset={handleResetEstimator}
+      reportData={displayData.reportData}
+      onGenerate={handleGenerateCurve}
+      isGenerateDisabled={isGenerateDisabled}
+    />
+    
+    {/* CONNECTOR - Solo aparece cuando hay datos del estimator */}
+    <EstimationToTechnicalSheetConnector
+  estimationData={
+    displayData.reportData ? {
+      reportData: displayData.reportData,
+      photometrics: displayData.photometrics
+    } : null
+  }
+  onDataTransfer={handleDataTransferToTechnicalSheet}
+  isVisible={!!displayData.photometrics && !!displayData.reportData}
+/>
+  </div>
+) : importedData?.photometrics && importedData?.reportData ? (
+  <DataViewer reportData={importedData.reportData} photometrics={importedData.photometrics} onReset={handleResetImporter} />
+) : (
+  <ImportView onFileUpload={handleFileParse} />
+)}
+                  </div>
+
+                  {activeMode === 'estimator' && (
+                    <EstimatorPanel
+                      photometrics={displayData.photometrics}
+                      reportData={displayData.reportData}
+                      activeChart={activeChart}
+                      setActiveChart={setActiveChart}
+                      handleDownloadIES={handleDownloadIES}
+                      handleDownloadLDT={handleDownloadLDT}
+                      pdfRenderIds={pdfRenderIds}
+                      setPdfRenderIds={setPdfRenderIds}
+                    />
+                  )}
+                </div>
+              </>
             )}
-          </div>
 
-          {activeMode === 'estimator' && (
-            <EstimatorPanel
-              photometrics={displayData.photometrics}
-              reportData={displayData.reportData}
-              activeChart={activeChart}
-              setActiveChart={setActiveChart}
-              handleDownloadIES={handleDownloadIES}
-              handleDownloadLDT={handleDownloadLDT}
-              pdfRenderIds={pdfRenderIds}
-              setPdfRenderIds={setPdfRenderIds}
-            />
-          )}
-        </div>
+            {currentPage === 'fichaTecnica' && (
+            <FichaTechnicalForm 
+           initialEstimatorData={technicalSheetData}
+           initialPhotometricData={displayData.photometrics}
+           />
+        )}
+          </>
+        )}
       </div>
 
       {showLoadingOverlay && (
@@ -349,16 +429,4 @@ const handleResetEstimator = () => {
       )}
     </div>
   );
-}
-
-function downloadFile(filename: string, content: string) {
-  const file = new Blob([content], { type: 'text/plain;charset=utf-8' });
-  const url = URL.createObjectURL(file);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
 }

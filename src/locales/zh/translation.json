@@ -1,0 +1,606 @@
+{
+  "landing": {
+    "title": "SENS - 预估光度分析",
+    "description": "发现SENS，为您的建筑照明项目提供的数字照明平台。",
+    "nav": {
+      "hero": "首页",
+      "features": "功能特点",
+      "cta": "联系我们",
+      "app": "启动应用"
+    },
+    "hero": {
+      "title": "为您的项目提供专业照明解决方案",
+      "subtitle": "SENS为所有项目类型和规格提供先进、定制的建筑照明系统。",
+      "cta": "体验SENS"
+    },
+    "features": {
+      "items": [
+        {
+          "title": "定制照明设计",
+          "desc": "根据您的具体项目要求和设计标准开发量身定制的照明解决方案。"
+        },
+        {
+          "title": "能源性能优化",
+          "desc": "监控能耗并在保持性能标准的同时最大化照明系统效率。"
+        },
+        {
+          "title": "全系统集成",
+          "desc": "与现有照明控制系统和楼宇管理基础设施无缝互操作。"
+        }
+      ]
+    },
+    "cta": {
+      "title": "使用SENS启动您的项目",
+      "subtitle": "注册探索SENS如何改变您的空间照明体验和项目成果。",
+      "button": "启动应用"
+    }
+  },
+  "languages": {
+    "en": "英语",
+    "es": "西班牙语",
+    "zh": "中文"
+  },
+  "app": {
+    "mainTitle": "SENS光度分析套件 - LNS开发",
+    "estimatorTab": "光度估算器",
+    "importerTab": "数据导入与分析",
+    "homeTab": "仪表板",
+    "fichaTecnicaTab": "技术数据表",
+    "homeContent": "欢迎使用SENS光度分析平台"
+  },
+  "form": {
+    "title": "灯具技术规格",
+    "resetButton": "清空表单",
+    "sections": {
+      "identification": "产品标识",
+      "advanced": "高级配置",
+      "technical": "技术参数"
+    },
+    "labels": {
+      "luminaireType": "灯具类型",
+      "productName": "产品名称",
+      "spec": "技术规格",
+      "dimensions": "尺寸（毫米）",
+      "cct": "相关色温（K）",
+      "cri": "显色指数",
+      "lampsInside": "集成光源",
+      "additionalNotes": "技术说明",
+      "ratedVoltage": "额定电压",
+      "power": "功耗（W）",
+      "luminousFlux": "光通量（流明）",
+      "calculatedImax": "计算最大光强（坎德拉）",
+      "calculatedEfficiency": "系统效能",
+      "beamAngle": "光束分布角度（°）",
+      "opticsType": "光学系统类型",
+      "emissionShape": "光分布模式"
+    },
+    "placeholders": {
+      "notes": "附加技术规格或项目说明",
+      "voltage": "例如：220-240V交流"
+    },
+    "texts": {
+      "presetApplied": "已应用配置预设：{{summary}}",
+      "canModify": "以下所有参数均可修改以满足项目规格要求。"
+    }
+  },
+  "diagrams": {
+    "estimatorTitle": "光度分析图表",
+    "polarButton": "极坐标分布曲线",
+    "isoluxButton": "等照度图",
+    "isoluxHeight": "安装高度（米）",
+    "isoluxLevels": "照度等级（勒克斯）"
+  },
+  "importer": {
+    "viewTitle": "光度数据导入与分析",
+    "description": "选择.ies或.ldt格式的光度数据文件。系统将处理数据并生成相应的光度图表和分析。",
+    "selectFileButton": "选择光度文件",
+    "viewerTitle": "导入数据分析",
+    "importAnotherButton": "导入其他文件"
+  },
+  "downloads": {
+    "iesButton": "下载IES文件",
+    "ldtButton": "下载LDT文件",
+    "pdfButton": "下载技术报告",
+    "generating": "处理数据中..."
+  },
+  "messages": {
+    "importSuccess": "文件成功导入并分析。",
+    "importError": "处理所选文件时出错。",
+    "invalidFileError": "文件不包含有效的光度数据或报告信息。",
+    "formResetSuccess": "表单成功清空并重置！"
+  },
+  "generateButton": "生成光度数据",
+  "invalidDataAlert": "请使用有效的技术值完成所有必填字段。",
+  "resetButton": "重置表单",
+  "pdf": {
+    "headerTitle": "SENS光度分析报告",
+    "pageIndicator": "第1页，共1页",
+    "mainTitle": "灯具光度测试报告",
+    "tableModel": "产品型号",
+    "tableImax": "最大光强（坎德拉）",
+    "tablePower": "额定功率（W）",
+    "tableEfficiency": "系统效能",
+    "tableVoltage": "工作电压（V）",
+    "tableFlux": "总光通量（流明）",
+    "tableLamps": "集成光源",
+    "tableCIEClass": "CIE分类",
+    "cieClassValue": "直接分布",
+    "polarDiagramTitle": "光强分布曲线",
+    "isoluxDiagramTitle": "C0平面等照度图",
+    "footerDisclaimer": "基于预估光度性能数据的模拟报告。",
+    "footerCredit": "由SENS分析工具生成，LNS HK数字系统开发。",
+    "technicalSheetTitle": "技术数据表",
+    "index": "目录",
+    "page": "第{{current}}页，共{{total}}页",
+    "pageShort": "第{{page}}页",
+    "footer": "SENS - LNS HK数字系统技术文档",
+    "indexHeaderLine1": "公司：{{companyName}}",
+    "indexHeaderLine2": "技术数据表",
+    "indexHeaderLine3": "产品名称：{{productName}}",
+    "indexHeaderLine4": "参考代码：{{referenceCode}}"
+  },
+  "importView": {
+    "title": "光度数据导入与处理",
+    "description": "选择.ies或.ldt格式的光度数据文件进行分析和报告。",
+    "fileUploadLabel": "选择光度数据文件"
+  },
+  "navbar": {
+    "home": "仪表板",
+    "estimator": "光度分析",
+    "technicalSheet": "技术文档"
+  },
+  "technicalSheet": {
+    "title": "专业技术数据表",
+    "subtitle": "完整全面的产品技术规格",
+    "estimatorDataLoaded": "从光度分析加载的技术数据",
+    "footerNote": "标有*的字段需要强制完成",
+    "resetButton": "清除所有数据",
+    "generateButton": "生成技术表",
+    "previewButton": "文档预览",
+    "ofFields": "共{{total}}个技术参数",
+    
+    "tabs": {
+      "identification": "产品标识",
+      "optical": "光学性能",
+      "electrical": "电气特性",
+      "mechanical": "机械规格",
+      "led": "LED光源数据",
+      "control": "控制与调光",
+      "certification": "合规与认证"
+    },
+    
+    "subtitles": {
+      "identification": "核心产品标识和分类数据",
+      "optical": "光度性能和光学特性",
+      "electrical": "电气参数和功耗规格",
+      "mechanical": "物理尺寸和构造细节",
+      "led": "LED光源技术规格",
+      "control": "调光协议和控制系统兼容性",
+      "certification": "法规合规和认证标准"
+    },
+    
+    "fields": {
+      "productName": "产品名称",
+      "referenceCode": "产品参考代码",
+      "commercialName": "商业名称",
+      "productFamily": "产品系列/家族",
+      "manufacturer": "制造商/分销商/进口商/设计师",
+      "reportCompany": "技术文档提供者",
+      "description": "技术描述",
+      "applications": "推荐应用",
+      
+      "luminousFlux": "总光通量（流明）",
+      "efficacy": "光效（流明/瓦）",
+      "cct": "相关色温（K）",
+      "cri": "显色指数（CRI）",
+      "beamAngle": "光束分布角度（°）",
+      "beamType": "光束分布类型",
+      "opticalSystem": "光学系统配置",
+      "distributionType": "光度分布",
+      "uniformity": "光照均匀度比率",
+      
+      "totalPower": "系统总功率（W）",
+      "ledPower": "LED模块功率（W）",
+      "inputVoltage": "输入电压范围",
+      "frequency": "工作频率（Hz）",
+      "current": "工作电流（A）",
+      "powerFactor": "功率因数",
+      "driverType": "LED驱动器类型",
+      "driverEfficiency": "驱动器效率（%）",
+      "driverLifetime": "驱动器使用寿命（小时）",
+      "connectionType": "电气连接",
+      "protectionClass": "电气保护等级",
+      
+      "dimensions": "物理尺寸（毫米）",
+      "weight": "产品重量（千克）",
+      "materials": "构造材料",
+      "finish": "表面处理",
+      "color": "产品颜色",
+      "ip": "IP防护等级",
+      "ik": "IK冲击等级",
+      "operatingTemperature": "工作温度范围",
+      "coolingSystem": "热管理系统",
+      
+      "ledType": "LED技术",
+      "ledBrand": "LED制造商",
+      "ledLifetime": "LED使用寿命（小时）",
+      "colorConsistency": "颜色一致性（SDCM）",
+      "sdcm": "颜色容差（SDCM）",
+      
+      "dimmable": "调光能力",
+      "dimmingType": "调光方法",
+      "protocol": "控制协议",
+      "tunableWhite": "可调白光光谱",
+      "rgb": "RGB/RGBW能力",
+      "colorTuningRange": "颜色调节范围",
+      "controlInterfaces": "控制接口",
+      "compatibleSystems": "兼容控制系统",
+      
+      "ceMarking": "CE合规标记",
+      "standards": "适用标准",
+      "otherCertifications": "附加认证",
+      "safetyClass": "安全等级",
+      "warrantyYears": "保修期（年）",
+      "warrantyConditions": "保修条款与条件"
+    },
+    
+    "placeholders": {
+      "select": "选择选项...",
+      "productName": "例如：办公室嵌入式筒灯60°",
+      "referenceCode": "例如：DL-OFFICE-60D",
+      "reportCompany": "例如：SENS, LNS HK数字系统",
+      "commercialName": "例如：高级办公室灯具系列",
+      "productFamily": "例如：嵌入式筒灯",
+      "manufacturer": "例如：SENS照明解决方案",
+      "description": "详细的技术产品描述和特性...",
+      "applications": "办公空间、商业环境、公共区域...",
+      "luminousFlux": "例如：1600",
+      "efficacy": "例如：85.0",
+      "uniformity": "例如：0.7",
+      "totalPower": "例如：25.5",
+      "ledPower": "例如：22.0",
+      "current": "例如：0.21",
+      "powerFactor": "例如：0.95",
+      "driverEfficiency": "例如：90.5",
+      "driverLifetime": "例如：50,000",
+      "dimensions": "例如：200×200×80",
+      "weight": "例如：1.2",
+      "operatingTemperature": "例如：-20°C 至 +40°C",
+      "ledLifetime": "例如：50,000",
+      "sdcm": "例如：3",
+      "colorTuningRange": "例如：2700K-6500K",
+      "compatibleSystems": "例如：DALI, 0-10V, KNX",
+      "standards": "例如：EN 60598, EN 62471, EN 62031",
+      "certifications": "例如：UL, ETL, DLC, Energy Star",
+      "warrantyConditions": "具体的保修条款、条件和限制..."
+    },
+    
+    "options": {
+      "cct": {
+        "2700": "2700K - 暖白光",
+        "3000": "3000K - 暖白光",
+        "3500": "3500K - 中性白光",
+        "4000": "4000K - 冷白光",
+        "5000": "5000K - 日光",
+        "6500": "6500K - 冷日光"
+      },
+      "cri": {
+        "70": "70 - 标准",
+        "80": "80 - 良好",
+        "90": "90 - 优秀",
+        "95": "95 - 优质"
+      },
+      "beamAngle": {
+        "10": "10° - 极窄",
+        "24": "24° - 窄",
+        "36": "36° - 中等",
+        "60": "60° - 宽",
+        "90": "90° - 很宽",
+        "120": "120° - 超宽"
+      },
+      "beamType": {
+        "symmetric": "对称",
+        "asymmetric": "非对称",
+        "wallWash": "墙面洗墙",
+        "spot": "聚光",
+        "flood": "泛光"
+      },
+      "opticalSystem": {
+        "reflector": "反射器",
+        "tirLens": "TIR透镜",
+        "pcLens": "PC透镜",
+        "opalDiffuser": "乳白扩散板",
+        "prismaticLens": "棱镜透镜"
+      },
+      "distribution": {
+        "type1": "类型 I - 极窄",
+        "type2": "类型 II - 窄",
+        "type3": "类型 III - 中等",
+        "type4": "类型 IV - 宽",
+        "type5": "类型 V - 圆形"
+      },
+      "voltage": {
+        "100_120V": "100-120V 交流",
+        "200_240V": "200-240V 交流",
+        "277V": "277V 交流",
+        "100_240V": "100-240V 交流",
+        "12V": "12V 直流",
+        "24V": "24V 直流"
+      },
+      "frequency": {
+        "50Hz": "50 Hz",
+        "60Hz": "60 Hz",
+        "50_60Hz": "50/60 Hz"
+      },
+      "driverType": {
+        "builtIn": "内置",
+        "external": "外置",
+        "constantCurrent": "恒流",
+        "constantVoltage": "恒压"
+      },
+      "connectionType": {
+        "terminalBlock": "端子排",
+        "quickConnect": "快速连接",
+        "screwTerminal": "螺丝端子",
+        "wireLeads": "引线"
+      },
+      "protectionClass": {
+        "class1": "I类",
+        "class2": "II类",
+        "class3": "III类"
+      },
+      "materials": {
+        "aluminum": "铝",
+        "steel": "钢",
+        "plastic": "塑料",
+        "polycarbonate": "聚碳酸酯",
+        "glass": "玻璃",
+        "ceramic": "陶瓷"
+      },
+      "finish": {
+        "white": "白色",
+        "black": "黑色",
+        "silver": "银色",
+        "anodized": "阳极氧化",
+        "powderCoated": "粉末涂层",
+        "brushed": "拉丝"
+      },
+      "color": {
+        "white": "白色",
+        "black": "黑色",
+        "silver": "银色",
+        "gray": "灰色",
+        "custom": "定制"
+      },
+      "ip": {
+        "ip20": "IP20",
+        "ip44": "IP44",
+        "ip54": "IP54",
+        "ip65": "IP65",
+        "ip66": "IP66",
+        "ip67": "IP67",
+        "ip68": "IP68"
+      },
+      "ik": {
+        "ik06": "IK06",
+        "ik07": "IK07",
+        "ik08": "IK08",
+        "ik09": "IK09",
+        "ik10": "IK10"
+      },
+      "coolingSystem": {
+        "natural": "自然对流",
+        "heatSink": "散热器",
+        "forcedAir": "强制风冷",
+        "liquid": "液冷"
+      },
+      "ledType": {
+        "smd": "SMD",
+        "cob": "COB",
+        "highPower": "大功率",
+        "midPower": "中功率",
+        "csp": "CSP",
+        "filament": "灯丝"
+      },
+      "ledBrand": {
+        "cree": "CREE",
+        "lumileds": "Lumileds",
+        "samsung": "三星",
+        "seoul": "首尔半导体",
+        "nichia": "日亚",
+        "osram": "欧司朗",
+        "bridgelux": "普瑞"
+      },
+      "ledLifetime": {
+        "l70b50_25k": "L70B50 25,000小时",
+        "l70b50_35k": "L70B50 35,000小时",
+        "l70b50_50k": "L70B50 50,000小时",
+        "l80b50_50k": "L80B50 50,000小时",
+        "l90b50_50k": "L90B50 50,000小时",
+        "l70b50_60k": "L70B50 60,000小时",
+        "l70b50_100k": "L70B50 100,000小时"
+      },
+      "colorConsistency": {
+        "plusMinus1": "±1 SDCM",
+        "plusMinus2": "±2 SDCM",
+        "plusMinus3": "±3 SDCM",
+        "plusMinus5": "±5 SDCM",
+        "plusMinus7": "±7 SDCM"
+      },
+      "dimmingType": {
+        "phaseControl": "相位控制",
+        "0_10V": "0-10V",
+        "1_10V": "1-10V",
+        "pwm": "PWM",
+        "dmx": "DMX"
+      },
+      "protocol": {
+        "dali": "DALI",
+        "dali2": "DALI-2",
+        "dmx512": "DMX512",
+        "knx": "KNX",
+        "zigbee": "Zigbee",
+        "bluetooth": "蓝牙",
+        "wifi": "Wi-Fi",
+        "0_10V": "0-10V",
+        "1_10V": "1-10V"
+      },
+      "controlInterfaces": {
+        "wired": "有线",
+        "wireless": "无线",
+        "both": "两者"
+      },
+      "safetyClass": {
+        "class1": "I类",
+        "class2": "II类",
+        "class3": "III类"
+      },
+      "warrantyYears": {
+        "1": "1年",
+        "2": "2年",
+        "3": "3年",
+        "5": "5年",
+        "7": "7年",
+        "10": "10年"
+      }
+    },
+    
+    "descriptions": {
+      "productName": "根据目录规格的官方产品名称",
+      "referenceCode": "唯一产品参考识别代码",
+      "reportCompany": "负责生成此技术文档的公司",
+      "commercialName": "用于营销目的的商业名称",
+      "productFamily": "产品系列或家族分类",
+      "manufacturer": "公司法人实体名称",
+      "description": "详细的技术描述和规格",
+      "applications": "推荐的应用和使用场景",
+      "luminousFlux": "总光通量输出（流明）",
+      "efficacy": "光效（流明/瓦）",
+      "cct": "相关色温（开尔文）",
+      "cri": "显色指数值",
+      "beamAngle": "50%最大光强时的光束角度",
+      "beamType": "光束分布模式类型",
+      "opticalSystem": "采用的光学系统类型",
+      "distributionType": "光度分布分类",
+      "uniformity": "光照均匀度测量",
+      "totalPower": "系统总功耗（瓦）",
+      "ledPower": "LED模块功耗",
+      "inputVoltage": "工作电压范围规格",
+      "frequency": "电气频率要求",
+      "current": "工作电流（安培）",
+      "powerFactor": "功率因数值",
+      "driverType": "LED驱动器技术类型",
+      "driverEfficiency": "驱动器能量转换效率",
+      "driverLifetime": "预期驱动器运行寿命",
+      "connectionType": "电气连接方法",
+      "protectionClass": "电气保护分类",
+      "dimensions": "产品物理尺寸（毫米）",
+      "weight": "产品重量（千克）",
+      "materials": "主要构造材料",
+      "finish": "表面处理类型和处理",
+      "color": "产品颜色规格",
+      "ip": "侵入保护等级分类",
+      "ik": "冲击保护等级分类",
+      "operatingTemperature": "工作温度范围规格",
+      "coolingSystem": "热管理系统配置",
+      "ledType": "LED技术分类",
+      "ledBrand": "LED制造商品牌",
+      "ledLifetime": "LED使用寿命至L70/B50标准",
+      "colorConsistency": "颜色一致性（SDCM单位）",
+      "sdcm": "标准偏差颜色匹配容差",
+      "dimmable": "调光能力规格",
+      "dimmingType": "采用的调光方法",
+      "protocol": "控制通信协议",
+      "tunableWhite": "可调白光光谱能力",
+      "rgb": "RGB或RGBW颜色能力",
+      "colorTuningRange": "色温调节范围",
+      "controlInterfaces": "可用控制接口选项",
+      "compatibleSystems": "兼容的控制系统和协议",
+      "ceMarking": "CE合规标记状态",
+      "standards": "适用的标准和法规",
+      "otherCertifications": "附加认证和批准",
+      "safetyClass": "电气安全分类",
+      "warrantyYears": "保修期持续时间（年）",
+      "warrantyConditions": "保修条款、条件和限制"
+    },
+    
+    "guide": {
+      "title": "字段优先级指南",
+      "description": "字段按产品规格完整性的重要性分类",
+      "required": "必需",
+      "recommended": "推荐",
+      "optional": "可选"
+    },
+    
+    "fieldPriority": {
+      "required": "必需",
+      "recommended": "推荐",
+      "optional": "可选"
+    },
+    
+    "progress": {
+      "sectionProgress": "章节完成进度"
+    },
+    
+    "calculations": {
+      "efficiency": "系统效能",
+      "basedOnFluxPower": "基于光通量和总功耗计算"
+    },
+    
+    "tips": {
+      "identification": "产品标识",
+      "identificationDescription": "用于产品编目、分类和技术参考的核心标识数据。",
+      "optical": "光学性能数据",
+      "opticalDescription": "光学参数定义产品的光度行为、光分布特性和视觉性能。",
+      "electrical": "电气规格",
+      "electricalDescription": "电气特性包括系统集成的功耗、效率指标和运行参数。",
+      "mechanical": "机械构造",
+      "mechanicalDescription": "定义灯具物理特性和安装要求的物理尺寸、材料规格和构造细节。",
+      "led": "LED光源规格",
+      "ledDescription": "LED模块、组件和光源技术的技术特性和性能规格。",
+      "control": "控制系统集成",
+      "controlDescription": "调光能力、控制协议、通信接口和智能照明系统集成特性。",
+      "certification": "合规与认证",
+      "certificationDescription": "用于专业规格的法规合规认证、安全标准遵守、质量批准和保修信息。"
+    },
+
+    "pdfPreview": {
+      "title": "预览 - 技术数据表",
+      "subtitle": "查看将包含在最终文档中的章节",
+      "fieldsCompleted": "{{count}}个参数已完成",
+      "included": "已包含",
+      "emptySections": "无技术数据的章节：",
+      "sectionsSummary": "{{completed}}个章节（共{{total}}个）将包含技术规格",
+      "reviewMoreButton": "查看附加数据",
+      "generatingButton": "处理中...",
+      "generateProfessionalButton": "生成专业文档",
+      "professionalInfo": {
+        "title": "专业文档标准",
+        "description": "生成的PDF将遵循IEC/EN照明产品专业技术文档标准。"
+      }
+    },
+
+    "actions": {
+      "resetForm": "清空表单",
+      "previewPDF": "PDF预览",
+      "downloadPDF": "下载PDF",
+      "resetConfirmation": "确定要清空整个表单吗？所有数据都将丢失。",
+      "resetSuccess": "表单已成功清空"
+    },
+    "stats": {
+      "sections": "个章节",
+      "fields": "个字段",
+      "completed": "已完成",
+      "filled": "已填写"
+    }
+  },
+  "navigation": {
+    "home": "仪表板",
+    "estimator": "光度分析",
+    "technicalSheet": "技术文档"
+  },
+  "common": {
+    "yes": "是",
+    "no": "否"
+  }
+}
