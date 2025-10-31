@@ -13,11 +13,10 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
       <Suspense fallback={<div>Loading translations...</div>}>
         <BrowserRouter>
           <Routes>
-            <Route path="/" element={<LandingPage onEnterApp={() => window.location.href = '/app'} />} />
-            <Route path="/app" element={<App />} />
+            <Route path="/" element={<LandingPage onEnterApp={() => window.location.href = '/app/estimator'} />} />
             <Route path="/app/estimator" element={<App />} />
             <Route path="/technical-sheet" element={<App />} />
-            <Route path="*" element={<LandingPage onEnterApp={() => window.location.href = '/app'} />} />
+            <Route path="*" element={<LandingPage onEnterApp={() => window.location.href = '/app/estimator'} />} />
           </Routes>
         </BrowserRouter>
       </Suspense>

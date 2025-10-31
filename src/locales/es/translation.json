@@ -8,12 +8,43 @@
       "cta": "Contacto",
       "app": "Lanzar Aplicación"
     },
+    "header": {
+      "home": "Inicio",
+      "technicalSheet": "Ficha Técnica", 
+      "goToApp": "Go to App"
+    },
+    "footer": {
+    "tagline": "Estimador Fotométrico",
+      "description": "Herramienta avanzada para estimaciones fotométricas precisas y eficientes. Desarrollado con la última tecnología para profesionales.",
+      "goToApp": "Ir a la App",
+      "quickLinks": "Enlaces Rápidos",
+      "home": "Inicio", 
+      "technicalSheet": "Ficha Técnica",
+      "documentation": "Documentación",
+      "goToAppLink": "Ir a la App",
+      "contact": "Contacto",
+      "copyright": "© 2025 SENS Estimador Fotométrico. Todos los derechos reservados.",
+      "privacy": "Privacidad",
+      "terms": "Términos", 
+      "cookies": "Cookies",
+      "resources": "Recursos"
+    },
     "hero": {
-      "title": "Soluciones Profesionales de Iluminación para Tus Proyectos",
-      "subtitle": "SENS ofrece sistemas de iluminación arquitectónica avanzados y personalizados para todo tipo de proyectos y especificaciones.",
-      "cta": "Experimenta SENS"
+      "title": "Precisiones de Algoritmos Matemáticos",
+      "subtitle": "para Decisiones Rápidas de Iluminación",
+      "description": "SENS ofrece sistemas digitales de iluminación arquitectónica avanzados y personalizados para todo tipo de proyectos y especificaciones. Diseña iluminación más eficiente con curvas fotométricas precisas.",
+      "cta": "Experimentar Precisión SENS",
+      "stats": {
+         "algorithms": "Algoritmos Validados",
+        "speed": "Minutos vs Horas", 
+        "integration": "Flujo Integrado"
+      }
     },
     "features": {
+      "title": "Tecnología de Precisión Matemática",
+      "subtitle": "Algoritmos avanzados que transforman datos en decisiones técnicas confiables para profesionales de iluminación",
+      "interested": "¿Necesitas más información técnica?",
+      "demo": "Solicitar Información Técnica",
       "items": [
         {
           "title": "Diseño de Iluminación Personalizado",
@@ -30,9 +61,11 @@
       ]
     },
     "cta": {
-      "title": "Inicia Tu Proyecto con SENS",
-      "subtitle": "Regístrate para explorar cómo SENS puede transformar tu experiencia de iluminación espacial y los resultados del proyecto.",
-      "button": "Lanzar Aplicación"
+      "title": "Comienza tu Proyecto con Precisión Matemática",
+      "subtitle": "Únete a ingenieros y diseñadores que ya confían en SENS para decisiones técnicas rápidas y confiables",
+      "button": "Comenzar Ahora",
+      "demo": "Ver Características",
+      "trustedBy": "Confiado por equipos de ingeniería líderes"
     }
   },
   "languages": {
@@ -61,7 +94,7 @@
       "productName": "Designación del Producto",
       "spec": "Especificación Técnica",
       "dimensions": "Dimensiones (mm)",
-      "cct": "Temperatura de Color Correlacionada (K)",
+      "cct": "Temperatura Color Correlacionada (K)",
       "cri": "Índice de Renderizado de Color",
       "lampsInside": "Fuentes de Luz Integradas",
       "additionalNotes": "Notas Técnicas",
@@ -476,7 +509,7 @@
       "applications": "Aplicaciones recomendadas y escenarios de uso",
       "luminousFlux": "Salida de flujo luminoso total en lúmenes",
       "efficacy": "Eficacia luminosa en lúmenes por vatio",
-      "cct": "Temperatura de color correlacionada en Kelvin",
+      "cct": "Temperatura color correla. en Kelvin",
       "cri": "Valor del índice de renderizado de color",
       "beamAngle": "Ángulo del haz al 50% de la intensidad máxima",
       "beamType": "Tipo de patrón de distribución del haz de luz",
@@ -591,14 +624,17 @@
       "sections": "secciones",
       "fields": "campos",
       "completed": "completadas",
-      "filled": "llenados"
+      "filled": "llenados",
+      "accuracy": "Precisión en mediciones",
+        "speed": "Más rápido que métodos tradicionales", 
+        "trust": "Profesionales confían en nosotros"
     }
   },
-  "navigation": {
-    "home": "Panel de Control",
-    "estimator": "Análisis Fotométrico",
-    "technicalSheet": "Documentación Técnica"
-  },
+ "navigation": {
+  "home": "Inicio",
+  "estimator": "Estimador", 
+  "technicalSheet": "Ficha Técnica"
+},
   "common": {
     "yes": "Sí",
     "no": "No"

@@ -1,0 +1,21 @@
+node_modules/
+src/
+.git/
+.gitignore
+*.local
+.env*
+!/.env.production
+vite.config.ts
+tsconfig.*
+postcss.config.js
+tailwind.config.js
+.eslintrc.*
+.prettierrc.*
+package.json
+package-lock.json
+README.md
+.DS_Store
+*.log
+
+# ✅ Permitir dist/ para que se suban todos los assets
+!dist/

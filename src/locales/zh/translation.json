@@ -8,12 +8,43 @@
       "cta": "联系我们",
       "app": "启动应用"
     },
+    "header": {
+      "home": "首页",
+      "technicalSheet": "技术数据表", 
+      "goToApp": "进入应用"
+    },
+    "footer": {
+      "tagline": "光度估算器",
+      "description": "用于精确高效光度估算的高级工具。采用最新技术为专业人士开发。",
+      "goToApp": "进入应用",
+      "quickLinks": "快速链接",
+      "home": "首页", 
+      "technicalSheet": "技术数据表",
+      "documentation": "文档",
+      "goToAppLink": "进入应用",
+      "contact": "联系我们",
+      "copyright": "© 2025 SENS光度估算器。保留所有权利。",
+      "privacy": "隐私",
+      "terms": "条款", 
+      "cookies": "Cookies",
+      "resources": "资源"
+    },
     "hero": {
-      "title": "为您的项目提供专业照明解决方案",
-      "subtitle": "SENS为所有项目类型和规格提供先进、定制的建筑照明系统。",
-      "cta": "体验SENS"
+      "title": "数学算法精度",
+      "subtitle": "用于快速照明决策",
+      "description": "SENS提供先进的数字建筑照明系统，为各类项目和规格定制。通过精确的光度曲线设计更高效的照明。照明专业人士的终极工具。",
+      "cta": "体验SENS精度",
+      "stats": {
+        "algorithms": "验证算法",
+        "speed": "分钟 vs 小时", 
+        "integration": "集成工作流"
+      }
     },
     "features": {
+      "title": "数学精度技术",
+      "subtitle": "先进算法将数据转化为照明专业人士可靠的技术决策",
+      "interested": "需要更多技术信息？",
+      "demo": "请求技术信息",
       "items": [
         {
           "title": "定制照明设计",
@@ -30,9 +61,11 @@
       ]
     },
     "cta": {
-      "title": "使用SENS启动您的项目",
-      "subtitle": "注册探索SENS如何改变您的空间照明体验和项目成果。",
-      "button": "启动应用"
+      "title": "以数学精度开始您的项目",
+      "subtitle": "加入已经信任SENS进行快速可靠技术决策的工程师和设计师行列",
+      "button": "立即开始",
+      "demo": "查看功能",
+      "trustedBy": "受到工程团队信赖于"
     }
   },
   "languages": {
@@ -591,14 +624,17 @@
       "sections": "个章节",
       "fields": "个字段",
       "completed": "已完成",
-      "filled": "已填写"
+      "filled": "已填写",
+      "accuracy": "测量精度",
+      "speed": "比传统方法更快", 
+      "trust": "专业人士信赖我们"
     }
   },
   "navigation": {
-    "home": "仪表板",
-    "estimator": "光度分析",
-    "technicalSheet": "技术文档"
-  },
+  "home": "首页",
+  "estimator": "估算器",
+  "technicalSheet": "技术数据表"
+},
   "common": {
     "yes": "是",
     "no": "否"

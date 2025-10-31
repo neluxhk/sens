@@ -1,0 +1,33 @@
+runtime: nodejs20
+env: standard
+instance_class: F1
+
+env_variables:
+  NODE_ENV: "production"
+
+handlers:
+  # 1️⃣ Servir JS/CSS generados por Vite
+  - url: /assets
+    static_dir: dist/assets
+    secure: always
+    http_headers:
+      Cache-Control: "public, max-age=31536000, immutable"
+
+  # 2️⃣ Servir otros archivos estáticos (manifest, favicon, etc.)
+  - url: /(.*\..+)$
+    static_files: dist/\1
+    upload: dist/(.*\..+)$
+    secure: always
+
+  # 3️⃣ Fallback SPA: cualquier otra ruta apunta a index.html
+  - url: /.*
+    static_files: dist/index.html
+    upload: dist/index.html
+    secure: always
+    http_headers:
+      Cache-Control: "no-cache, no-store, must-revalidate"
+
+automatic_scaling:
+  min_instances: 1
+  max_instances: 3
+  target_cpu_utilization: 0.65

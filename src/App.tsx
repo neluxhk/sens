@@ -1,6 +1,6 @@
 // ====================== App.tsx ======================
 import React, { useState, useEffect, useCallback } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, Navigate } from 'react-router-dom';
 import LandingPage from './components/landing/LandingPage';
 import { useTranslation } from 'react-i18next';
 import PhotometricEstimatorForm from './components/PhotometricEstimatorForm';
@@ -202,12 +202,13 @@ const downloadFile = (filename: string, content: string) => {
 };
 
 // ====================== App Principal ======================
+// ====================== App Principal ======================
 export default function App() {
+  
+  // Hooks
   const { t, i18n, ready } = useTranslation();
   const location = useLocation();
   const navigate = useNavigate();
-
-  // ===== Estados principales =====
   const [activeMode, setActiveMode] = useState<'estimator' | 'importer'>('estimator');
   const [formData, setFormData] = useState<LuminaireFormData>(defaultForm);
   const [importedData, setImportedData] = useState<FullLuminaireData | null>(null);
@@ -216,35 +217,41 @@ export default function App() {
   const [activeChart, setActiveChart] = useState<'polar' | 'isolux'>('polar');
   const [pdfRenderIds, setPdfRenderIds] = useState<{ polar: string; isolux: string } | null>(null);
   const [technicalSheetData, setTechnicalSheetData] = useState({
-  productName: '',
-  referenceCode: '', 
-  productFamily: '',
-  description: '',
-  luminousFlux: 0,
-  cct: 0,
-  cri: 0,
-  beamAngle: 0,
-  opticalSystem: '',
-  beamType: '',
-  totalPower: 0,
-  inputVoltage: '',
-  dimensions: '',
-  sections: {
-    identification: {},
-    optical: {},
-    electrical: {},
-    mechanical: {}
-  }
-});
+    productName: '',
+    referenceCode: '', 
+    productFamily: '',
+    description: '',
+    luminousFlux: 0,
+    cct: 0,
+    cri: 0,
+    beamAngle: 0,
+    opticalSystem: '',
+    beamType: '',
+    totalPower: 0,
+    inputVoltage: '',
+    dimensions: '',
+    sections: {
+      identification: {},
+      optical: {},
+      electrical: {},
+      mechanical: {}
+    }
+  });
+
 
   // ===== Navegación por rutas =====
-  const currentPage = location.pathname.includes('/estimator') 
-    ? 'estimador' 
-    : location.pathname.includes('/technical-sheet') 
-    ? 'fichaTecnica' 
-    : 'home';
+  const currentPage = 
+    location.pathname === '/' ? 'home' :
+    location.pathname.includes('/estimator') ? 'estimador' :
+    location.pathname.includes('/technical-sheet') ? 'fichaTecnica' :
+    'home';
 
-  const enterApp = () => navigate('/app/estimator');
+  const enterApp = () => {
+  console.log('🎯 APP.TSX: enterApp ejecutada - navegando a /app/estimator');
+  console.trace('Stack trace para ver de dónde viene'); // ← ESTA LÍNEA NUEVA
+  navigate('/app/estimator');
+};
+  
 
   // ===== Callbacks =====
   const handleGenerateCurve = useCallback(() => {
@@ -328,7 +335,6 @@ export default function App() {
   return (
     <div className="min-h-screen bg-gray-50 relative">
       <Navbar />
-      
       <div className="max-w-7xl mx-auto bg-white rounded-2xl shadow-md p-6 lg:p-8 space-y-6 relative">
         {/* MOSTRAR LANDING PAGE O APP */}
         {currentPage === 'home' ? (

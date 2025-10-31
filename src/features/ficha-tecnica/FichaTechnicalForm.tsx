@@ -72,7 +72,7 @@ export const FichaTechnicalForm: React.FC<FichaTechnicalFormProps> = ({
 
   // Función para convertir datos para PDF
   const convertDataForPDF = (data: TechnicalSheetData): any => {
-    console.log('🔄 Convirtiendo datos para PDF (versión simplificada)');
+    console.log('🔄 Convirtiendo datos para PDF');
     
     if (!data) return {};
     
@@ -92,40 +92,13 @@ export const FichaTechnicalForm: React.FC<FichaTechnicalFormProps> = ({
     return data;
   };
 
-  // VERIFICACIÓN DE DATOS
-  React.useEffect(() => {
-    console.log('📊 DATOS EN HOOK useFichaData:', data);
-    console.log('📊 initialEstimatorData vs data:', {
-      initialProductName: initialEstimatorData?.productName,
-      dataProductName: data?.productName,
-      iguales: initialEstimatorData?.productName === data?.productName
-    });
-  }, [data, initialEstimatorData]);
-
-  // Formulario react-hook-form para la estructura antigua (compatibilidad)
-  const { register, handleSubmit, watch, setValue } = useForm<TechnicalSheetData>();
-
-  // Cargar datos del estimador si vienen por props
+  // Cargar datos del estimador si vienen por props - UNA VEZ SOLAMENTE
   useEffect(() => {
     if (initialEstimatorData && initialPhotometricData) {
       console.log('🔄 Cargando datos del estimator en hook...');
       loadEstimatorData(initialEstimatorData, initialPhotometricData);
     }
-  }, [initialEstimatorData, initialPhotometricData, loadEstimatorData]);
-
-  // Sincronizar formulario con hook de datos
-  useEffect(() => {
-    const subscription = watch((formData) => {
-      if (!data) return;
-      
-      Object.entries(formData).forEach(([key, value]) => {
-        if (value !== undefined && value !== data[key as keyof TechnicalSheetData]) {
-          updateField(key, value as string);
-        }
-      });
-    });
-    return () => subscription.unsubscribe();
-  }, [watch, data, updateField]);
+  }, []); // ← DEPENDENCIAS VACÍAS para que se ejecute solo una vez
 
   // Función para limpiar formulario
   const handleResetForm = () => {
@@ -185,15 +158,6 @@ export const FichaTechnicalForm: React.FC<FichaTechnicalFormProps> = ({
     }
   };
 
-  // Función onSubmit original
-  const onSubmit: SubmitHandler<TechnicalSheetData> = async () => {
-    if (!data) {
-      console.error('No hay datos para generar PDF');
-      return;
-    }
-    await generateTechnicalSheetPDF(data as any, t as any);
-  };
-
   // Configuración de pestañas
   const tabs: { key: SectionKey; label: string }[] = [
     { key: "identification", label: t("technicalSheet.tabs.identification") },
@@ -238,7 +202,7 @@ export const FichaTechnicalForm: React.FC<FichaTechnicalFormProps> = ({
     }
   };
 
-  // Componente de Vista Previa PDF
+  // Componente de Vista Previa PDF CORREGIDO
   const PdfPreviewPanel = () => {
     const { t } = useTranslation();
     
@@ -249,6 +213,55 @@ export const FichaTechnicalForm: React.FC<FichaTechnicalFormProps> = ({
       );
     });
 
+    // FUNCIÓN CORREGIDA para generar PDF
+    const handleGenerateProfessionalDocument = async () => {
+      if (!data) {
+        setActionFeedback({
+          type: 'error', 
+          message: 'No hay datos para generar el documento'
+        });
+        return;
+      }
+      
+      try {
+        setPdfGeneration(prev => ({ ...prev, status: 'generating' }));
+        
+        const pdfData = convertDataForPDF(data);
+        await generateTechnicalSheetPDF(pdfData, t);
+        
+        setActionFeedback({
+          type: 'success',
+          message: 'Documento profesional generado correctamente'
+        });
+        
+      } catch (error) {
+        console.error('Error generando PDF:', error);
+        setActionFeedback({
+          type: 'error',
+          message: 'Error al generar el documento profesional'
+        });
+      } finally {
+        setTimeout(() => {
+          setPdfGeneration({ status: 'idle', includedSections: [] });
+        }, 2000);
+      }
+    };
+
+    // FUNCIÓN CORREGIDA para revisar datos adicionales
+    const handleReviewAdditionalData = () => {
+      setPdfGeneration({ status: 'idle', includedSections: [] });
+      
+      const emptySections = tabs.filter(tab => 
+        !sectionsWithData.find(s => s.key === tab.key)
+      );
+      
+      if (emptySections.length > 0) {
+        setActiveTab(emptySections[0].key);
+      }
+      
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
     return (
       <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
         <div className="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col">
@@ -256,9 +269,9 @@ export const FichaTechnicalForm: React.FC<FichaTechnicalFormProps> = ({
           <div className="bg-gradient-to-r from-blue-600 to-blue-700 px-6 py-4 text-white">
             <div className="flex justify-between items-center">
               <div>
-                <h3 className="text-xl font-bold">{t("technicalSheet.pdfPreview.title")}</h3>
+                <h3 className="text-xl font-bold">Preview - Technical Data Sheet</h3>
                 <p className="text-blue-100 text-sm mt-1">
-                  {t("technicalSheet.pdfPreview.subtitle")}
+                  View sections that will be included in the final document
                 </p>
               </div>
               <button
@@ -273,7 +286,7 @@ export const FichaTechnicalForm: React.FC<FichaTechnicalFormProps> = ({
           {/* Content */}
           <div className="flex-1 overflow-y-auto p-6">
             {/* Resumen de secciones */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            <div className="space-y-4 mb-6">
               {sectionsWithData.map(section => (
                 <div key={section.key} className="border border-green-200 bg-green-50 rounded-lg p-4">
                   <div className="flex items-center justify-between">
@@ -284,16 +297,14 @@ export const FichaTechnicalForm: React.FC<FichaTechnicalFormProps> = ({
                       <div>
                         <h4 className="font-semibold text-green-800">{section.label}</h4>
                         <p className="text-green-600 text-sm">
-                          {t("technicalSheet.pdfPreview.fieldsCompleted", {
-                            count: Object.values(data?.sections?.[section.key] || {}).filter(val => 
-                              val !== undefined && val !== "" && val !== null
-                            ).length
-                          })}
+                          {Object.values(data?.sections?.[section.key] || {}).filter(val => 
+                            val !== undefined && val !== "" && val !== null
+                          ).length} parameters completed
                         </p>
                       </div>
                     </div>
                     <span className="bg-green-500 text-white text-xs px-2 py-1 rounded-full">
-                      {t("technicalSheet.pdfPreview.included")}
+                      Included
                     </span>
                   </div>
                 </div>
@@ -303,10 +314,10 @@ export const FichaTechnicalForm: React.FC<FichaTechnicalFormProps> = ({
             {/* Secciones vacías */}
             {tabs.filter(tab => !sectionsWithData.find(s => s.key === tab.key)).length > 0 && (
               <div className="border-t pt-4">
-                <h4 className="font-medium text-gray-700 mb-3">{t("technicalSheet.pdfPreview.emptySections")}</h4>
-                <div className="flex flex-wrap gap-2">
+                <h4 className="font-medium text-gray-700 mb-3">Sections without technical data:</h4>
+                <div className="grid grid-cols-3 gap-2">
                   {tabs.filter(tab => !sectionsWithData.find(s => s.key === tab.key)).map(section => (
-                    <span key={section.key} className="px-3 py-1 bg-gray-100 text-gray-500 rounded-full text-sm">
+                    <span key={section.key} className="px-3 py-2 bg-gray-100 text-gray-500 rounded text-sm text-center">
                       {section.label}
                     </span>
                   ))}
@@ -321,55 +332,45 @@ export const FichaTechnicalForm: React.FC<FichaTechnicalFormProps> = ({
                   💡
                 </div>
                 <div>
-                  <h5 className="font-semibold text-blue-800">{t("technicalSheet.pdfPreview.professionalInfo.title")}</h5>
+                  <h5 className="font-semibold text-blue-800">Professional Document Standards</h5>
                   <p className="text-blue-700 text-sm mt-1">
-                    {t("technicalSheet.pdfPreview.professionalInfo.description")}
+                    Generated PDF will follow IEC/EN lighting product professional technical documentation standards.
+                  </p>
+                  <p className="text-blue-600 text-sm mt-2">
+                    <strong>{sectionsWithData.length} sections (of {tabs.length})</strong> will contain technical specifications
                   </p>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Actions */}
+          {/* Actions - CORREGIDOS */}
           <div className="border-t px-6 py-4 bg-gray-50">
             <div className="flex justify-between items-center">
               <div className="text-sm text-gray-600">
-                {t("technicalSheet.pdfPreview.sectionsSummary", {
-                  completed: sectionsWithData.length,
-                  total: tabs.length
-                })}
+                {sectionsWithData.length} sections (of {tabs.length}) will contain technical specifications
               </div>
               <div className="flex space-x-3">
                 <button
-                  onClick={() => setPdfGeneration({ status: 'idle', includedSections: [] })}
-                  className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50"
+                  onClick={handleReviewAdditionalData}
+                  className="px-6 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50"
                 >
-                  {t("technicalSheet.pdfPreview.reviewMoreButton")}
+                  Review Additional Data
                 </button>
                 <button
-                  onClick={async () => {
-                    if (!data) {
-                      console.error('No hay datos para generar PDF');
-                      return;
-                    }
-                    setPdfGeneration(prev => ({ ...prev, status: 'generating' }));
-                    await generateTechnicalSheetPDF(data as any, t as any);
-                    setTimeout(() => {
-                      setPdfGeneration({ status: 'idle', includedSections: [] });
-                    }, 2000);
-                  }}
+                  onClick={handleGenerateProfessionalDocument}
                   disabled={pdfGeneration.status === 'generating' || !data}
                   className="px-6 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
                 >
                   {pdfGeneration.status === 'generating' ? (
                     <>
                       <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                      <span>{t("technicalSheet.pdfPreview.generatingButton")}</span>
+                      <span>Generating...</span>
                     </>
                   ) : (
                     <>
                       <span>📄</span>
-                      <span>{t("technicalSheet.pdfPreview.generateProfessionalButton")}</span>
+                      <span>Generate Professional Document</span>
                     </>
                   )}
                 </button>
@@ -406,7 +407,6 @@ export const FichaTechnicalForm: React.FC<FichaTechnicalFormProps> = ({
           {t("technicalSheet.subtitle")}
         </p>
         
-        {/* Indicador de datos cargados del estimador */}
         {initialEstimatorData && (
           <div className="mt-3 bg-green-50 border border-green-200 rounded-lg p-3 inline-block">
             <p className="text-green-800 text-sm">
@@ -437,7 +437,7 @@ export const FichaTechnicalForm: React.FC<FichaTechnicalFormProps> = ({
       </div>
 
       {/* Formulario principal */}
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+      <form className="space-y-6">
         {/* Contenido de la pestaña activa */}
         <div className="min-h-[400px]">
           {renderTabContent()}
@@ -448,61 +448,45 @@ export const FichaTechnicalForm: React.FC<FichaTechnicalFormProps> = ({
           {/* Estadísticas */}
           <div className="text-sm text-gray-600">
             <div className="flex space-x-4">
-              <span title={t('technicalSheet.stats.completed')}>
-                📊 {stats.completedSections}/{stats.totalSections} {t('technicalSheet.stats.sections')}
+              <span>
+                📊 {stats.completedSections}/{stats.totalSections} sections
               </span>
-              <span title={t('technicalSheet.stats.filled')}>
-                ✅ {stats.filledFields} {t('technicalSheet.stats.fields')}
+              <span>
+                ✅ {stats.filledFields} fields
               </span>
             </div>
           </div>
           
           {/* Botones de acción */}
           <div className="flex space-x-3">
-            {/* Limpiar Formulario */}
             <button
               type="button"
               onClick={handleResetForm}
-              className="px-4 py-2 text-sm font-medium text-white bg-orange-600 rounded-lg hover:bg-orange-700 transition-colors flex items-center space-x-2"
+              className="px-4 py-2 text-sm font-medium text-white bg-orange-600 rounded-lg hover:bg-orange-700 transition-colors"
             >
-              <span>🗑️</span>
-              <span>{t('technicalSheet.actions.resetForm')}</span>
+              Reset Form
             </button>
             
-            {/* Vista Previa PDF */}
             <button
               type="button"
               onClick={handlePreview}
               disabled={!data || stats.filledFields === 0}
-              className="px-6 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-all flex items-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-6 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <span>👁️</span>
-              <span>{t('technicalSheet.actions.previewPDF')}</span>
-              <span className="bg-blue-800 text-white text-xs px-2 py-1 rounded-full">
-                {stats.filledFields}
-              </span>
+              Preview PDF ({stats.filledFields})
             </button>
 
-            {/* Descargar PDF */}
             <button
               type="button"
               onClick={handleDownloadPDF}
               disabled={!data || stats.filledFields === 0}
-              className="px-6 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 transition-all flex items-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-6 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <span>📄</span>
-              <span>{t('technicalSheet.actions.downloadPDF')}</span>
+              Download PDF
             </button>
           </div>
         </div>    
       </form>
-
-      {/* Formulario oculto para compatibilidad */}
-      <div className="hidden">
-        <input {...register("productName")} />
-        <input {...register("referenceCode")} />
-        <input {...register("luminousFlux")} />
-      </div>
 
       {/* Mostrar panel de vista previa cuando esté activo */}
       {pdfGeneration.status === 'preview' && <PdfPreviewPanel />}
