@@ -1,6 +1,6 @@
 // src/components/PolarDiagram.tsx
 import React from 'react';
-import Plot from 'react-plotly.js';
+import PlotlyOptimized from '../components/optimized/PlotlyOptimized';
 import { PhotometricData } from '../types/data';
 interface PolarDiagramProps {
 data: PhotometricData | null;
@@ -87,59 +87,45 @@ const maxCandelaLabel = (
 );
 
 return (
-<div className="w-full h-full">
-<Plot
-data={traces as any}
-// =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-// COMIENZA EL BLOQUE DE REEMPLAZO (la prop 'layout' en PolarDiagram.tsx)
-// =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-
-layout={{
-  title: title || 'Curva de Distribución Luminosa',
-  polar: {
-    angularaxis: {
-      rotation: -90,
-      direction: 'clockwise',
-      tickvals: [0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330],
-      ticktext: ['0°', '-30°', '-60°', '-90°', '-120°', '-150°', '180°', '150°', '120°', '90°', '60°', '30°'],
-      gridcolor: '#e2e8f0',
-    },
-    radialaxis: (() => {
-  // Escala automática basada en la intensidad máxima real
-  const maxVal = Math.max(500, Math.ceil(maxIntensity * 1.1));
-
-  // Determinamos cuántos círculos queremos (idealmente 4–6)
-  const numSteps = 5;
-  const step = Math.ceil(maxVal / numSteps / 100) * 100; // redondea a múltiplos de 100
-
-  // Generamos los valores de los anillos
-  const tickvals: number[] = [];
-  for (let i = step; i <= maxVal; i += step) {
-    tickvals.push(i);
-  }
-
-  return {
-    angle: 0,
-    range: [0, maxVal],
-    gridcolor: '#e2e8f0',
-    tickmode: 'array',
-    tickvals,
-    ticktext: tickvals.map(v => `${v}`),
-  };
-})(),
-  },
-  showlegend: true,
-  legend: { x: 0.5, y: 1.25, xanchor: 'center', orientation: 'h' },
-  margin: { t: 100, r: 40, b: 40, l: 40 },
-}}
-
-// =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-// TERMINA EL BLOQUE DE REEMPLAZO
-// =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-style={{ width: '100%', height: '100%' }}
-config={{ responsive: true, displaylogo: false }}
-/>
-{maxCandelaLabel}
-</div>
+  <div className="w-full h-full">
+    <PlotlyOptimized
+      data={traces as any}
+      layout={{
+        title: title || 'Curva de Distribución Luminosa',
+        polar: {
+          angularaxis: {
+            rotation: -90,
+            direction: 'clockwise',
+            tickvals: [0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330],
+            ticktext: ['0°', '-30°', '-60°', '-90°', '-120°', '-150°', '180°', '150°', '120°', '90°', '60°', '30°'],
+            gridcolor: '#e2e8f0',
+          },
+          radialaxis: (() => {
+            const maxVal = Math.max(500, Math.ceil(maxIntensity * 1.1));
+            const numSteps = 5;
+            const step = Math.ceil(maxVal / numSteps / 100) * 100;
+            const tickvals: number[] = [];
+            for (let i = step; i <= maxVal; i += step) {
+              tickvals.push(i);
+            }
+            return {
+              angle: 0,
+              range: [0, maxVal],
+              gridcolor: '#e2e8f0',
+              tickmode: 'array',
+              tickvals,
+              ticktext: tickvals.map(v => `${v}`),
+            };
+          })(),
+        },
+        showlegend: true,
+        legend: { x: 0.5, y: 1.25, xanchor: 'center', orientation: 'h' },
+        margin: { t: 100, r: 40, b: 40, l: 40 },
+      }}
+      style={{ width: '100%', height: '100%' }}
+      config={{ responsive: true, displaylogo: false }}
+    />
+    {maxCandelaLabel}
+  </div>
 );
 };

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import Plot from 'react-plotly.js';
+import PlotlyOptimized from '../components/optimized/PlotlyOptimized';
 import { PhotometricData } from '../types/data';
 import { calculateIsoluxCurves, IsoluxCurve } from '../utils/isoluxCalculator';
 
@@ -109,35 +109,36 @@ export const IsoluxDiagram: React.FC<IsoluxDiagramProps> = ({ photometricData, i
 
       {/* --- Contenedor del Gráfico --- */}
       <div className="flex-grow w-full h-full">
-        <Plot
-          data={traces as any}
-          layout={{
-            title: 'Diagrama de Isolux',
-            xaxis: {
-              title: { text: 'Distancia Horizontal (m)' },
-              gridcolor: '#e2e8f0',
-              zeroline: true,
-              zerolinecolor: '#94a3b8',
-              zerolinewidth: 1,
-            },
-            yaxis: {
-              title: { text: 'Distancia Transversal (m)' },
-              scaleanchor: 'x',
-              scaleratio: 1,
-              gridcolor: '#e2e8f0',
-              zeroline: true,
-              zerolinecolor: '#94a3b8',
-              zerolinewidth: 1,
-            },
-            showlegend: true,
-            legend: { x: 1.05, y: 1 },
-            margin: { t: 50, r: 30, b: 70, l: 80 },
-            plot_bgcolor: 'white',
-            paper_bgcolor: 'white',
-          }}
-          style={{ width: '100%', height: '100%' }}
-          config={{ responsive: true, displaylogo: false }}
-        />
+        <PlotlyOptimized
+  data={traces as any}
+  layout={{
+    title: 'Diagrama de Isolux',
+    // ... TODO tu layout se mantiene EXACTAMENTE igual
+    xaxis: {
+      title: { text: 'Distancia Horizontal (m)' },
+      gridcolor: '#e2e8f0',
+      zeroline: true,
+      zerolinecolor: '#94a3b8',
+      zerolinewidth: 1,
+    },
+    yaxis: {
+      title: { text: 'Distancia Transversal (m)' },
+      scaleanchor: 'x',
+      scaleratio: 1,
+      gridcolor: '#e2e8f0',
+      zeroline: true,
+      zerolinecolor: '#94a3b8',
+      zerolinewidth: 1,
+    },
+    showlegend: true,
+    legend: { x: 1.05, y: 1 },
+    margin: { t: 50, r: 30, b: 70, l: 80 },
+    plot_bgcolor: 'white',
+    paper_bgcolor: 'white',
+  }}
+  style={{ width: '100%', height: '100%' }}
+  config={{ responsive: true, displaylogo: false }}
+/>
       </div>
     </div>
   );

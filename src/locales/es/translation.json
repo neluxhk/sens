@@ -94,7 +94,7 @@
       "productName": "Designación del Producto",
       "spec": "Especificación Técnica",
       "dimensions": "Dimensiones (mm)",
-      "cct": "Temperatura Color Correlacionada (K)",
+      "cct": "Temp. de Color Correlacionada (K)",
       "cri": "Índice de Renderizado de Color",
       "lampsInside": "Fuentes de Luz Integradas",
       "additionalNotes": "Notas Técnicas",
