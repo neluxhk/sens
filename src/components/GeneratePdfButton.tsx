@@ -26,109 +26,162 @@ export const GeneratePdfButton: React.FC<GeneratePdfButtonProps> = ({
   const [isLoading, setIsLoading] = useState(false);
 
   const handleDownload = async () => {
-    if (disabled || !reportData) return;
-    setIsLoading(true);
+  if (disabled || !reportData) return;
+  setIsLoading(true);
 
-    const ids = onStartRender();
-    if (!ids) {
-      setIsLoading(false);
-      return;
-    }
+  const ids = onStartRender();
+  if (!ids) {
+    setIsLoading(false);
+    return;
+  }
 
-    setTimeout(async () => {
-      try {
-        const fontResponse = await fetch('/fonts/NotoSansSC-Regular.ttf');
-        const fontBuffer = await fontResponse.arrayBuffer();
-        const fontBase64 = btoa(new Uint8Array(fontBuffer).reduce((data, byte) => data + String.fromCharCode(byte), ''));
+  setTimeout(async () => {
+    try {
+      const fontResponse = await fetch('/fonts/NotoSansSC-Regular.ttf');
+      const fontBuffer = await fontResponse.arrayBuffer();
+      const fontBase64 = btoa(new Uint8Array(fontBuffer).reduce((data, byte) => data + String.fromCharCode(byte), ''));
 
-        const doc = new jsPDF('p', 'pt', 'a4');
-        doc.addFileToVFS('NotoSansSC-Regular.ttf', fontBase64);
-        doc.addFont('NotoSansSC-Regular.ttf', 'NotoSansSC', 'normal');
-        doc.setFont('NotoSansSC');
+      const doc = new jsPDF('p', 'pt', 'a4');
+      doc.addFileToVFS('NotoSansSC-Regular.ttf', fontBase64);
+      doc.addFont('NotoSansSC-Regular.ttf', 'NotoSansSC', 'normal');
+      doc.setFont('NotoSansSC');
 
-        const [polarElement, isoluxElement] = await Promise.all([
-          document.getElementById(ids.polarId),
-          document.getElementById(ids.isoluxId),
-        ]);
-        if (!polarElement || !isoluxElement) throw new Error("PDF elements not found.");
+      const [polarElement, isoluxElement] = await Promise.all([
+        document.getElementById(ids.polarId),
+        document.getElementById(ids.isoluxId),
+      ]);
+      if (!polarElement || !isoluxElement) throw new Error("PDF elements not found.");
 
-        const [polarCanvas, isoluxCanvas] = await Promise.all([
-          html2canvas(polarElement, { scale: 3, useCORS: true }),
-          html2canvas(isoluxElement, { scale: 3, useCORS: true }),
-        ]);
+      // FORZAR reflow
+      await new Promise(resolve => {
+        polarElement.offsetHeight;
+        isoluxElement.offsetHeight;
+        setTimeout(resolve, 500);
+      });
 
-        const polarImage = polarCanvas.toDataURL('image/jpeg', 0.9);
-        const isoluxImage = isoluxCanvas.toDataURL('image/jpeg', 0.9);
-        
-        const pageWidth = doc.internal.pageSize.getWidth();
-        const margin = 40;
-        let y = margin;
-        
-        doc.setFontSize(10);
-        doc.text(t('pdf.headerTitle'), margin, y);
-        doc.text(t('pdf.pageIndicator'), pageWidth - margin, y, { align: 'right' });
-        y += 30;
-        doc.setFontSize(14);
-        doc.text(t('pdf.mainTitle'), pageWidth / 2, y, { align: 'center' });
-        y += 30;
+      const [polarCanvas, isoluxCanvas] = await Promise.all([
+        html2canvas(polarElement, { 
+          scale: 2,
+          useCORS: true,
+          backgroundColor: '#ffffff',
+          logging: false
+        }),
+        html2canvas(isoluxElement, { 
+          scale: 2,
+          useCORS: true, 
+          backgroundColor: '#ffffff',
+          logging: false
+        }),
+      ]);
 
-        const formattedPower = reportData.power ? `${reportData.power.toFixed(1)} W` : '--';
-        const formattedImax = reportData.Imax ? reportData.Imax.toFixed(0) : 'N/A';
-        const formattedFlux = reportData.luminousFlux ? reportData.luminousFlux.toFixed(0) : '--';
+      const polarImage = polarCanvas.toDataURL('image/jpeg', 0.95);
+      const isoluxImage = isoluxCanvas.toDataURL('image/jpeg', 0.95);
+      
+      const pageWidth = doc.internal.pageSize.getWidth();
+      const pageHeight = doc.internal.pageSize.getHeight();
+      const margin = 40;
+      let y = margin;
+      
+      // HEADER
+      doc.setFontSize(10);
+      doc.text(t('pdf.headerTitle'), margin, y);
+      doc.text(t('pdf.pageIndicator'), pageWidth - margin, y, { align: 'right' });
+      y += 30;
+      
+      // TITLE
+      doc.setFontSize(14);
+      doc.text(t('pdf.mainTitle'), pageWidth / 2, y, { align: 'center' });
+      y += 40;
 
-        const tableBody = [
-            [t('pdf.tableModel'), reportData.productName, t('pdf.tableImax'), formattedImax],
-            [t('pdf.tablePower'), formattedPower, t('pdf.tableEfficiency'), reportData.calculatedEfficiency ?? 'N/A'],
-            [t('pdf.tableVoltage'), reportData.ratedVoltage ?? '--', t('pdf.tableFlux'), formattedFlux],
-            [t('pdf.tableLamps'), reportData.lampsInside ?? 1, t('pdf.tableCIEClass'), t('pdf.cieClassValue')]
-        ];
+      // TABLE DATA - CORREGIDO toFixed con verificación
+      const formattedPower = reportData.power ? `${Number(reportData.power).toFixed(1)} W` : '--';
+      const formattedImax = reportData.Imax ? Number(reportData.Imax).toFixed(0) : 'N/A';
+      const formattedFlux = reportData.luminousFlux ? Number(reportData.luminousFlux).toFixed(0) : '--';
+      const formattedEfficiency = reportData.calculatedEfficiency ? Number(reportData.calculatedEfficiency).toFixed(1) : 'N/A';
 
-        autoTable(doc, {
-            startY: y,
-            body: tableBody,
-            theme: 'grid',
-            styles: { font: 'NotoSansSC', fontSize: 9, cellPadding: 4, valign: 'middle' },
-            head: [],
-            columnStyles: {
-                0: { fontStyle: 'bold', cellWidth: 120 },
-                1: { cellWidth: 'auto' },
-                2: { fontStyle: 'bold', cellWidth: 120 },
-                3: { cellWidth: 'auto' },
-            },
-        });
+      const tableBody = [
+        [t('pdf.tableModel'), reportData.productName || '--', t('pdf.tableImax'), formattedImax],
+        [t('pdf.tablePower'), formattedPower, t('pdf.tableEfficiency'), formattedEfficiency],
+        [t('pdf.tableVoltage'), reportData.ratedVoltage || '--', t('pdf.tableFlux'), formattedFlux],
+        [t('pdf.tableLamps'), reportData.lampsInside?.toString() || '1', t('pdf.tableCIEClass'), t('pdf.cieClassValue')]
+      ];
 
-        y = (doc as any).lastAutoTable.finalY + 30;
+      autoTable(doc, {
+        startY: y,
+        body: tableBody,
+        theme: 'grid',
+        styles: { 
+          font: 'NotoSansSC', 
+          fontSize: 9, 
+          cellPadding: 5,
+          valign: 'middle'
+          // REMOVED: lineHeight no es soportado
+        },
+        head: [],
+        columnStyles: {
+          0: { fontStyle: 'bold', cellWidth: 130, minCellHeight: 25 },
+          1: { cellWidth: 'auto', minCellHeight: 25 },
+          2: { fontStyle: 'bold', cellWidth: 130, minCellHeight: 25 },
+          3: { cellWidth: 'auto', minCellHeight: 25 },
+        },
+        margin: { left: margin, right: margin }
+      });
 
-        doc.setFontSize(11);
-        doc.text(t('pdf.polarDiagramTitle'), margin, y);
-        doc.text(t('pdf.isoluxDiagramTitle'), pageWidth / 2 + 20, y);
-        y += 20;
+      // OBTENER Y POSITION después de la tabla
+      y = (doc as any).lastAutoTable.finalY + 40;
 
-        const diagramWidth = (pageWidth - margin * 3) / 2;
-        const polarHeight = (polarCanvas.height * diagramWidth) / polarCanvas.width;
-        const isoluxHeight = (isoluxCanvas.height * diagramWidth) / isoluxCanvas.width;
-        doc.addImage(polarImage, 'JPEG', margin, y, diagramWidth, polarHeight);
-        doc.addImage(isoluxImage, 'JPEG', pageWidth / 2 + 10, y, diagramWidth, isoluxHeight);
-        y += Math.max(polarHeight, isoluxHeight) + 30;
-
-        if (y > doc.internal.pageSize.getHeight() - 60) y = doc.internal.pageSize.getHeight() - 60;
-        doc.setLineWidth(0.5);
-        doc.line(margin, y, pageWidth - margin, y);
-        y += 20;
-        doc.setFontSize(8);
-        doc.text(t('pdf.footerDisclaimer'), margin, y);
-        y += 12;
-        doc.text(t('pdf.footerCredit'), margin, y);
-
-        doc.save(`${reportData.productName || 'report'}.pdf`);
-      } catch (error) {
-        console.error("PDF generation failed:", error);
-      } finally {
-        onEndRender();
-        setIsLoading(false);
+      // VERIFICAR ESPACIO PARA DIAGRAMAS
+      const diagramWidth = (pageWidth - margin * 3) / 2;
+      const polarHeight = (polarCanvas.height * diagramWidth) / polarCanvas.width;
+      const isoluxHeight = (isoluxCanvas.height * diagramWidth) / isoluxCanvas.width;
+      const maxDiagramHeight = Math.max(polarHeight, isoluxHeight);
+      
+      if (y + maxDiagramHeight + 60 > pageHeight) {
+        doc.addPage();
+        y = margin;
       }
-    }, 100);
-  };
+
+      // DIAGRAM TITLES
+      doc.setFontSize(11);
+      doc.text(t('pdf.polarDiagramTitle'), margin, y);
+      doc.text(t('pdf.isoluxDiagramTitle'), pageWidth / 2 + 20, y);
+      y += 25;
+
+      // DIAGRAM IMAGES
+      doc.addImage(polarImage, 'JPEG', margin, y, diagramWidth, polarHeight);
+      doc.addImage(isoluxImage, 'JPEG', pageWidth / 2 + 20, y, diagramWidth, isoluxHeight);
+      y += maxDiagramHeight + 40;
+
+      // FOOTER
+      if (y > pageHeight - 80) {
+        doc.addPage();
+        y = margin;
+      }
+
+      doc.setLineWidth(0.5);
+      doc.line(margin, y, pageWidth - margin, y);
+      y += 25;
+      
+      // FOOTER TEXT
+      doc.setFontSize(8);
+      const footerText = t('pdf.footerDisclaimer');
+      const splitFooter = doc.splitTextToSize(footerText, pageWidth - margin * 2);
+      doc.text(splitFooter, margin, y);
+      y += splitFooter.length * 12 + 10;
+      
+      doc.text(t('pdf.footerCredit'), margin, y);
+
+      doc.save(`${reportData.productName || 'photometric_report'}.pdf`);
+      
+    } catch (error) {
+      console.error("PDF generation failed:", error);
+      alert("Error generating PDF. Please try again.");
+    } finally {
+      onEndRender();
+      setIsLoading(false);
+    }
+  }, 300);
+};
 
   return (
     <button
