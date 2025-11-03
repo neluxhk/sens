@@ -1,152 +1,110 @@
-// Navbar.tsx - VERSIÓN COMPLETA Y CORREGIDA
-import React from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+// src/components/Navbar.tsx (VERSIÓN RESPONSIVE)
+
+import React, { useState, useEffect } from 'react';
+import { NavLink, Link, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { Menu, X } from 'lucide-react'; // Iconos de Hamburguesa y X
 
-export const Navbar: React.FC = () => {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const { t, i18n, ready } = useTranslation();
-
-  // Función de navegación que mantiene el idioma
-  const handleNavigation = (path: string) => {
-    navigate(path);
-  };
-
-  const changeLanguage = (lng: string) => {
-    i18n.changeLanguage(lng);
-  };
-
-  const isActive = (path: string) => {
-    if (path === '/') {
-      return location.pathname === '/';
-    }
-    return location.pathname.includes(path);
-  };
-
-  if (!ready) {
-    return (
-      <nav className="bg-white shadow-lg border-b">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex-shrink-0 flex items-center">
-              <span className="text-xl font-bold text-gray-800">Sens</span>
-            </div>
-            <div className="text-gray-500">Loading...</div>
-          </div>
-        </div>
-      </nav>
-    );
-  }
+// --- Componente de Enlace Reutilizable (sin cambios) ---
+const AppNavLink = ({ to, children, onClick }: { to: string; children: React.ReactNode; onClick?: () => void }) => {
+  const baseClasses = "block px-3 py-2 rounded-md text-base font-medium";
+  const activeClassName = "bg-gray-900 text-white";
+  const inactiveClassName = "text-gray-300 hover:bg-gray-700 hover:text-white";
 
   return (
-    <nav className="bg-white shadow-lg border-b">
-      <div className="max-w-7xl mx-auto px-4">
-        <div className="flex justify-between items-center h-16">
-          {/* Logo - Navega a Inicio */}
-          <div className="flex-shrink-0 flex items-center">
-            <button 
-              onClick={() => handleNavigation('/')}
-              className="flex items-center space-x-3 hover:opacity-80 transition-opacity"
+    <NavLink
+      to={to}
+      end
+      onClick={onClick}
+      className={({ isActive }) => `${baseClasses} ${isActive ? activeClassName : inactiveClassName}`}
+    >
+      {children}
+    </NavLink>
+  );
+};
+
+// --- Componente de Selector de Idioma (ahora interno) ---
+const LanguageSwitcher: React.FC<{ mobile?: boolean }> = ({ mobile = false }) => {
+  const { i18n, t } = useTranslation();
+  const supportedLanguages = ['es', 'en', 'zh'];
+
+  return (
+    <div className={`flex items-center space-x-2 ${mobile ? 'p-4 border-t border-gray-700' : ''}`}>
+      {supportedLanguages.map((code) => (
+        <button
+          key={code}
+          onClick={() => i18n.changeLanguage(code)}
+          className={`px-3 py-1 text-xs font-semibold rounded-md transition-colors ${
+            i18n.language.startsWith(code)
+              ? (mobile ? 'bg-sky-200 text-sky-800' : 'bg-sky-100 text-sky-700')
+              : (mobile ? 'bg-gray-700 text-gray-300 hover:bg-gray-600' : 'text-sky-200 hover:bg-sky-500')
+          }`}
+        >
+          {t(`languages.${code}`)}
+        </button>
+      ))}
+    </div>
+  );
+};
+
+
+export const Navbar: React.FC = () => {
+  const { t } = useTranslation();
+  const [isOpen, setIsOpen] = useState(false);
+  const location = useLocation();
+
+  // Efecto para cerrar el menú automáticamente al cambiar de ruta
+  useEffect(() => {
+    setIsOpen(false);
+  }, [location]);
+
+  return (
+    <header className="bg-gray-800 shadow-md sticky top-0 z-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-16">
+          
+          {/* Logo */}
+          <div className="flex-shrink-0">
+            <Link to="/" className="text-white font-bold text-xl hover:opacity-80 transition-opacity">
+              SENS
+            </Link>
+          </div>
+
+          {/* Menú de Escritorio (se oculta en móvil) */}
+          <div className="hidden md:flex items-center space-x-4">
+            <AppNavLink to="/">{t('navbar.home')}</AppNavLink>
+            <AppNavLink to="/app/estimator">{t('navbar.estimator')}</AppNavLink>
+            <AppNavLink to="/app/technical-sheet">{t('navbar.technicalSheet')}</AppNavLink>
+            <LanguageSwitcher />
+          </div>
+
+          {/* Botón de Hamburguesa (solo visible en móvil) */}
+          <div className="md:hidden">
+            <button
+              onClick={() => setIsOpen(!isOpen)}
+              className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white"
+              aria-controls="mobile-menu"
+              aria-expanded={isOpen}
             >
-              <div className="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center text-white font-bold">
-                S
-              </div>
-              <span className="text-xl font-bold text-gray-800">SENS</span>
+              <span className="sr-only">Abrir menú principal</span>
+              {isOpen ? <X className="block h-6 w-6" /> : <Menu className="block h-6 w-6" />}
             </button>
           </div>
 
-          {/* Navegación central */}
-          <div className="hidden md:flex items-center space-x-8">
-            {/* INICIO */}
-            <button
-              onClick={() => handleNavigation('/')}
-              className={`px-3 py-2 rounded-md text-sm font-medium ${
-                isActive('/') && !isActive('/estimator') && !isActive('/technical-sheet')
-                  ? 'text-blue-600 border-b-2 border-blue-600' 
-                  : 'text-gray-700 hover:text-blue-600'
-              }`}
-            >
-              {t('navigation.home', 'Inicio')}
-            </button>
-            
-            {/* ESTIMADOR */}
-            <button
-              onClick={() => handleNavigation('/app/estimator')}
-              className={`px-3 py-2 rounded-md text-sm font-medium ${
-                isActive('/estimator') 
-                  ? 'text-blue-600 border-b-2 border-blue-600' 
-                  : 'text-gray-700 hover:text-blue-600'
-              }`}
-            >
-              {t('navigation.estimator', 'Estimador')}
-            </button>
-            
-            {/* FICHA TÉCNICA */}
-            <button
-              onClick={() => handleNavigation('/technical-sheet')}
-              className={`px-3 py-2 rounded-md text-sm font-medium ${
-                isActive('/technical-sheet') 
-                  ? 'text-blue-600 border-b-2 border-blue-600' 
-                  : 'text-gray-700 hover:text-blue-600'
-              }`}
-            >
-              {t('navigation.technicalSheet', 'Ficha Técnica')}
-            </button>
-          </div>
-
-          {/* Selector de idioma */}
-          <div className="flex items-center space-x-2">
-            <select
-              value={i18n.language}
-              onChange={(e) => changeLanguage(e.target.value)}
-              className="border border-gray-300 rounded px-2 py-1 text-sm"
-            >
-              <option value="es">Español</option>
-              <option value="en">English</option>
-              <option value="zh">中文</option>
-            </select>
-          </div>
-        </div>
-
-        {/* Menú móvil */}
-        <div className="md:hidden border-t border-gray-200 pt-4 pb-4">
-          <div className="flex flex-col space-y-4">
-            <button
-              onClick={() => handleNavigation('/')}
-              className={`text-left px-3 py-2 rounded-md text-base font-medium ${
-                isActive('/') && !isActive('/estimator') && !isActive('/technical-sheet')
-                  ? 'text-blue-600 bg-blue-50' 
-                  : 'text-gray-700 hover:text-blue-600'
-              }`}
-            >
-              {t('navigation.home', 'Inicio')}
-            </button>
-            
-            <button
-              onClick={() => handleNavigation('/app/estimator')}
-              className={`text-left px-3 py-2 rounded-md text-base font-medium ${
-                isActive('/estimator') 
-                  ? 'text-blue-600 bg-blue-50' 
-                  : 'text-gray-700 hover:text-blue-600'
-              }`}
-            >
-              {t('navigation.estimator', 'Estimador')}
-            </button>
-            
-            <button
-              onClick={() => handleNavigation('/technical-sheet')}
-              className={`text-left px-3 py-2 rounded-md text-base font-medium ${
-                isActive('/technical-sheet') 
-                  ? 'text-blue-600 bg-blue-50' 
-                  : 'text-gray-700 hover:text-blue-600'
-              }`}
-            >
-              {t('navigation.technicalSheet', 'Ficha Técnica')}
-            </button>
-          </div>
         </div>
       </div>
-    </nav>
+
+      {/* Menú Lateral Desplegable para Móvil */}
+      {isOpen && (
+        <div className="md:hidden" id="mobile-menu">
+          <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+            <AppNavLink to="/" onClick={() => setIsOpen(false)}>{t('navbar.home')}</AppNavLink>
+            <AppNavLink to="/app/estimator" onClick={() => setIsOpen(false)}>{t('navbar.estimator')}</AppNavLink>
+            <AppNavLink to="/app/technical-sheet" onClick={() => setIsOpen(false)}>{t('navbar.technicalSheet')}</AppNavLink>
+          </div>
+          <LanguageSwitcher mobile />
+        </div>
+      )}
+    </header>
   );
 };

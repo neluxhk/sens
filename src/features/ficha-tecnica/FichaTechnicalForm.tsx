@@ -31,6 +31,9 @@ export const FichaTechnicalForm: React.FC<FichaTechnicalFormProps> = ({
   initialPhotometricData 
 }) => {
   const { t } = useTranslation();
+  console.log('🔍 [4-FichaTechnicalForm] initialEstimatorData:', initialEstimatorData);
+  console.log('🔍 [4-FichaTechnicalForm] initialPhotometricData:', initialPhotometricData);
+  console.log('🔍 [4-FichaTechnicalForm] ¿Datos vacíos?:', !initialEstimatorData && !initialPhotometricData);
   
   // Estado local para la pestaña activa
   const [activeTab, setActiveTab] = React.useState<SectionKey>("identification");

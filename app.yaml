@@ -6,20 +6,25 @@ env_variables:
   NODE_ENV: "production"
 
 handlers:
-  # 1️⃣ Servir JS/CSS generados por Vite
+  # 1️⃣ SERVIR MANIFEST EXPLÍCITAMENTE (CRÍTICO)
+  - url: /manifest.json
+    static_files: dist/manifest.json
+    upload: dist/manifest.json
+    secure: always
+
+  # 2️⃣ SERVIR IMÁGENES Y ICONOS
+  - url: /images
+    static_dir: dist/images
+    secure: always
+
+  # 3️⃣ SERVIR ASSETS DE VITE
   - url: /assets
     static_dir: dist/assets
     secure: always
     http_headers:
       Cache-Control: "public, max-age=31536000, immutable"
 
-  # 2️⃣ Servir otros archivos estáticos (manifest, favicon, etc.)
-  - url: /(.*\..+)$
-    static_files: dist/\1
-    upload: dist/(.*\..+)$
-    secure: always
-
-  # 3️⃣ Fallback SPA: cualquier otra ruta apunta a index.html
+  # 4️⃣ FALLBACK SPA (ÚLTIMO)
   - url: /.*
     static_files: dist/index.html
     upload: dist/index.html

@@ -13,6 +13,7 @@ import  FichaTechnicalForm  from './features/ficha-tecnica/FichaTechnicalForm';
 import { Navbar } from './components/Navbar';
 import { EstimationToTechnicalSheetConnector } from './features/ficha-tecnica/EstimationToTechnicalSheetConnector';
 
+
 import { generateEstimatedPhotometricData } from './utils/photometricEstimator';
 import { generateIesFileContent, generateLdtFileContent } from './utils/fileGenerators';
 import { parseIes } from './utils/iesParser';
@@ -24,6 +25,7 @@ import {
   ParsedPhotometricData,
   PhotometricData,
 } from './types/data';
+
 
 const LOCALSTORAGE_KEY = 'sens_photometric_form_v2';
 
@@ -304,16 +306,23 @@ export default function App() {
 
  const handleDataTransferToTechnicalSheet = useCallback((technicalData: any) => {
   
-  setTechnicalSheetData(prev => ({
-    ...prev,
-    ...technicalData,
-    sections: {
-      ...prev.sections,
-      ...technicalData.sections
-    }
-  }));
+  console.log('🔍 [1-App.tsx] Datos recibidos en handleDataTransfer:', technicalData);
   
-  // Usa la ruta correcta basada en tu estructura
+  setTechnicalSheetData(prev => {
+    const newData = {
+      ...prev,
+      ...technicalData,
+      sections: {
+        ...prev.sections,
+        ...technicalData.sections
+      }
+    };
+    
+    console.log('🔍 [2-App.tsx] Nuevo technicalSheetData:', newData); // 🎯 DENTRO DEL setState
+    return newData;
+  });
+  
+  console.log('🔍 [3-App.tsx] Navegando a /technical-sheet');
   navigate('/technical-sheet');
 }, [navigate]);
 
@@ -389,6 +398,7 @@ export default function App() {
     } : null
   }
   onDataTransfer={handleDataTransferToTechnicalSheet}
+  onNavigateToTechnicalSheet={() => navigate('/technical-sheet')}
   isVisible={!!displayData.photometrics && !!displayData.reportData}
 />
   </div>
@@ -425,7 +435,7 @@ export default function App() {
         )}
       </div>
 
-      {showLoadingOverlay && (
+                  {showLoadingOverlay && (
         <div className="absolute inset-0 flex items-center justify-center bg-gray-100 bg-opacity-70 z-50">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
@@ -433,6 +443,11 @@ export default function App() {
           </div>
         </div>
       )}
+
+      {/* 🎯 TEST COMPLETO - LOS 5 BADGES */}
+      <div className="fixed bottom-4 left-4 bg-white p-4 rounded-lg shadow-lg border space-y-2 z-50">
+        <p className="text-sm font-bold mb-2">🧪 StatusBadge Test:</p>
+      </div>
     </div>
   );
 }

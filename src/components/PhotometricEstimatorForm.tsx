@@ -6,6 +6,8 @@ import React, { useEffect, useMemo, useState, useCallback } from 'react';
 import { BeamAngleVisualizer } from './BeamAngleVisualizer';
 import { LuminaireFormData, PhotometricData, LuminaireReportData } from '../types/data';
 import { useTranslation } from 'react-i18next';
+// Al inicio de PhotometricEstimatorForm.tsx - agregar:
+
 
 import FormField from './FormField';
 import { generateEstimatedPhotometricData } from '../utils/photometricEstimator';
@@ -86,6 +88,8 @@ const PhotometricEstimatorForm: React.FC<PhotometricEstimatorFormProps> = ({
   isGenerateDisabled 
 }) => {
   const { t } = useTranslation(); 
+
+
   // Estados puramente internos que solo afectan a este componente
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [dirty, setDirty] = useState(false);
@@ -411,15 +415,21 @@ const PhotometricEstimatorForm: React.FC<PhotometricEstimatorFormProps> = ({
 
       {/* --- Buttons --- */}
       <div className="flex items-center justify-between mt-8 pt-6 border-t">
-        <button
-          type="button"
-          onClick={onGenerate}
-          disabled={isGenerateDisabled}
-          // CLASES CORREGIDAS PARA MEJOR VISIBILIDAD
-          className="px-6 py-2 font-semibold rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75 transition-colors duration-200 ease-in-out bg-blue-600 text-white hover:bg-blue-700 disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed"
-        >
-          {t('generateButton')}
-        </button>
+      <button
+  type="button"
+  onClick={onGenerate}
+  disabled={isGenerateDisabled}
+  className={`px-6 py-2 font-semibold rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75 transition-colors duration-200 ease-in-out ${
+    isGenerateDisabled 
+      ? 'bg-gray-300 text-gray-500 cursor-not-allowed' 
+      : 'bg-green-600 text-white hover:bg-green-700'
+  }`}
+>
+  {isGenerateDisabled 
+    ? t('generateButton.uptodate', '✅ Photometric Curve Generated') 
+    : t('generateButton.ready', '📊 Generate Photometric Curve')
+  }
+</button>
 
         <button
           type="button"
@@ -429,6 +439,7 @@ const PhotometricEstimatorForm: React.FC<PhotometricEstimatorFormProps> = ({
           {t('resetButton')}
         </button>
       </div>
+      
       
       {showToast && <div className="mt-2 text-green-600 text-sm">{t('messages.formResetSuccess', 'Form reset successfully!')}</div>}
 

@@ -1,0 +1,21 @@
+{
+  "name": "SENS Platform",
+  "short_name": "SENS",
+  "description": "Data visualization and analysis tool",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#1a1a1a",
+  "theme_color": "#00d4ff",
+  "icons": [
+    {
+      "src": "/images/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/images/android-chrome-512x512.png",
+      "sizes": "512x512", 
+      "type": "image/png"
+    }
+  ]
+}
